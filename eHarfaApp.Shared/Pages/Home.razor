@@ -2,14 +2,33 @@
 @using eHarfaApp.Shared.Services
 @inject IFormFactor FormFactor
 
-<PageTitle>Home</PageTitle>
-<SectionContent SectionName="page-title">Home</SectionContent>
+<section>
+    <PageTitle>Home</PageTitle>
+    <SectionContent SectionName="page-title">Home</SectionContent>
 
-<h1>Hello, world!</h1>
-
-Welcome to your new app running on <em>@factor</em> using <em>@platform</em>.
-
-@code {
-    private string factor => FormFactor.GetFormFactor();
-    private string platform => FormFactor.GetPlatform();
-}
+    <MudContainer>
+        <MudTextField
+            T="string"
+            bind-Value="Search"
+            Label="Cautare"
+            Adornment="Adornment.Start"
+            AdornmentIcon="@Icons.Material.Outlined.Search" F></MudTextField>
+        <MudTabs
+            Outlined="true"
+            ApplyEffectsToContainer="true"
+            Class="mt-8"
+            TabPanelsClass="pa-6 pb-8"
+            Style="height:75vh;"
+            Border="true"
+            Centered="true"
+            PrevIcon="@Icons.Material.Filled.SkipPrevious"
+            NextIcon="@Icons.Material.Filled.SkipNext"
+            Position="Position.Bottom"
+        >
+            @foreach (var category in Categories)
+            {
+                <MudTabPanel ID="@category.Id" Icon="@category.Icon">@category.Content</MudTabPanel>
+            }
+        </MudTabs>
+    </MudContainer>
+</section>
