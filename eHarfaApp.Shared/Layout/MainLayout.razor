@@ -38,7 +38,9 @@
         <MudAppBar Elevation="1" Style="padding-top: env(safe-area-inset-top);">
             <MudIcon Icon="@Icons.Material.Outlined.ArrowBackIosNew" Disabled="_disableBackBtn"></MudIcon>
             <MudSpacer/>
-            <MudText Class="title">My Application</MudText>
+            <MudText Class="title">
+                <SectionOutlet SectionName="page-title"/>
+            </MudText>
             <MudSpacer/>
             <MudIconButton
                 Icon="@Icons.Material.Outlined.Menu"
@@ -49,7 +51,7 @@
         <MudDrawer @bind-Open="@_drawerOpen" Class="sidebar" Anchor="Anchor.End">
             <NavMenu @bind-IsDarkMode="_isDarkMode"/>
         </MudDrawer>
-        <MudMainContent Class="main">
+        <MudMainContent Class="main ma-4">
             @Body
         </MudMainContent>
     </MudLayout>

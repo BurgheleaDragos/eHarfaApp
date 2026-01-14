@@ -1,8 +1,9 @@
-﻿@page "/weather"
+﻿@page "/song/{id}"
 
-<PageTitle>Weather</PageTitle>
+<PageTitle>Song @Id </PageTitle>
+<SectionContent SectionName="page-title">Song @Id </SectionContent>
 
-<h1>Weather</h1>
+<h1>Song</h1>
 
 <p>This component demonstrates showing data.</p>
 
@@ -39,7 +40,10 @@ else
 
 @code {
     private WeatherForecast[]? forecasts;
-
+    
+    [Parameter]
+    public string Id { get; set; }
+    
     protected override async Task OnInitializedAsync()
     {
         // Simulate asynchronous loading to demonstrate a loading indicator

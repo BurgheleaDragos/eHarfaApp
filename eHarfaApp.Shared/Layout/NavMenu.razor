@@ -1,16 +1,22 @@
-﻿<MudNavMenu Bordered="true">
-    <MudNavLink 
-        Href="/" 
-        Match="NavLinkMatch.All" 
-        IconColor="Color.Primary" 
-        Icon="@Icons.Material.TwoTone.Home">Acasa</MudNavLink>
-    <MudNavLink 
-        Href="/settings" 
-        Match="NavLinkMatch.Prefix"
-        IconColor="Color.Primary" 
-        Icon="@Icons.Material.TwoTone.Settings">Setari</MudNavLink>
-    <MudSpacer/>
-    <MudSwitch @bind-Value="@IsDarkMode" Label="Mod noapte"></MudSwitch>
+﻿<MudNavMenu Bordered="false" Class="d-flex align-content-space-start flex-wrap flex-grow-1 my-4">
+    <MudContainer>
+        <MudNavLink
+            Href="/"
+            Match="NavLinkMatch.All"
+            IconColor="Color.Primary"
+            Icon="@Icons.Material.Outlined.Home">Acasa</MudNavLink>
+        <MudNavLink
+            Href="/settings"
+            Match="NavLinkMatch.Prefix"
+            IconColor="Color.Primary"
+            Icon="@Icons.Material.Outlined.Settings">Setari</MudNavLink>
+        <MudNavLink
+            Href="/song/123"
+            Match="NavLinkMatch.Prefix"
+            IconColor="Color.Primary"
+            Icon="@Icons.Material.Outlined.Soap">Song 123</MudNavLink>
+    </MudContainer>
+    <MudSwitch @bind-Value="@IsDarkMode" Label="Mod noapte" Class="mx-4"/>
 </MudNavMenu>
 
 
