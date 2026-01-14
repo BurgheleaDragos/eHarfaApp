@@ -1,0 +1,34 @@
+﻿
+Microsoft Visual Studio Solution File, Format Version 12.00
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "eHarfaApp", "eHarfaApp\eHarfaApp.csproj", "{2655A5ED-D2E8-4EC5-8768-564C5C2C5812}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "eHarfaApp.Shared", "eHarfaApp.Shared\eHarfaApp.Shared.csproj", "{84AB68E9-031F-4829-B153-5693EDEF91DE}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "eHarfaApp.Web", "eHarfaApp.Web\eHarfaApp.Web.csproj", "{426B3A53-3EDE-405F-A4A2-244CE84F5715}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "eHarfaApp.Web.Client", "eHarfaApp.Web.Client\eHarfaApp.Web.Client.csproj", "{010BEBAC-0D82-46D1-900A-46A776FD98BA}"
+EndProject
+Global
+	GlobalSection(SolutionConfigurationPlatforms) = preSolution
+		Debug|Any CPU = Debug|Any CPU
+		Release|Any CPU = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(ProjectConfigurationPlatforms) = postSolution
+		{2655A5ED-D2E8-4EC5-8768-564C5C2C5812}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{2655A5ED-D2E8-4EC5-8768-564C5C2C5812}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{2655A5ED-D2E8-4EC5-8768-564C5C2C5812}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{2655A5ED-D2E8-4EC5-8768-564C5C2C5812}.Release|Any CPU.Build.0 = Release|Any CPU
+		{84AB68E9-031F-4829-B153-5693EDEF91DE}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{84AB68E9-031F-4829-B153-5693EDEF91DE}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{84AB68E9-031F-4829-B153-5693EDEF91DE}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{84AB68E9-031F-4829-B153-5693EDEF91DE}.Release|Any CPU.Build.0 = Release|Any CPU
+		{426B3A53-3EDE-405F-A4A2-244CE84F5715}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{426B3A53-3EDE-405F-A4A2-244CE84F5715}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{426B3A53-3EDE-405F-A4A2-244CE84F5715}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{426B3A53-3EDE-405F-A4A2-244CE84F5715}.Release|Any CPU.Build.0 = Release|Any CPU
+		{010BEBAC-0D82-46D1-900A-46A776FD98BA}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{010BEBAC-0D82-46D1-900A-46A776FD98BA}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{010BEBAC-0D82-46D1-900A-46A776FD98BA}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{010BEBAC-0D82-46D1-900A-46A776FD98BA}.Release|Any CPU.Build.0 = Release|Any CPU
+	EndGlobalSection
+EndGlobal

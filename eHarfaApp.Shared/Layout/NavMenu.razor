@@ -1,0 +1,36 @@
+﻿<MudNavMenu Bordered="true">
+    <MudNavLink 
+        Href="/" 
+        Match="NavLinkMatch.All" 
+        IconColor="Color.Primary" 
+        Icon="@Icons.Material.TwoTone.Home">Acasa</MudNavLink>
+    <MudNavLink 
+        Href="/settings" 
+        Match="NavLinkMatch.Prefix"
+        IconColor="Color.Primary" 
+        Icon="@Icons.Material.TwoTone.Settings">Setari</MudNavLink>
+    <MudSpacer/>
+    <MudSwitch @bind-Value="@IsDarkMode" Label="Mod noapte"></MudSwitch>
+</MudNavMenu>
+
+
+@code
+{
+    private bool _isDarkMode;
+    
+    [Parameter]
+    public bool IsDarkMode
+    {
+        get => _isDarkMode;
+        set
+        {
+            if (_isDarkMode == value) return;
+            _isDarkMode = value;
+            IsDarkModeChanged.InvokeAsync(value);
+        }
+    }
+
+    [Parameter]
+    public EventCallback<bool> IsDarkModeChanged { get; set; }   
+    
+}

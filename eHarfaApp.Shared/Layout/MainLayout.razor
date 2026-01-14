@@ -1,0 +1,101 @@
+﻿@inherits LayoutComponentBase
+
+@* Required *@
+<MudThemeProvider IsDarkMode="@_isDarkMode" @ref="_mudThemeProvider"/>
+<MudPopoverProvider />
+
+@* Needed for dialogs *@
+<MudDialogProvider />
+
+@* Needed for snackbars *@
+<MudSnackbarProvider />
+
+@* <div class="page"> *@
+@*     <div class="sidebar"> *@
+@*         <NavMenu/> *@
+@*     </div> *@
+@* *@
+@*     <main> *@
+@*         <div class="top-row px-4"> *@
+@*             <a href="https://learn.microsoft.com/aspnet/core/" target="_blank">About</a> *@
+@*         </div> *@
+@* *@
+@*         <article class="content px-4"> *@
+@*             @Body *@
+@*         </article> *@
+@*     </main> *@
+@* </div> *@
+@* *@
+@* <div id="blazor-error-ui" data-nosnippet> *@
+@*     An unhandled error has occurred. *@
+@*     <a href="." class="reload">Reload</a> *@
+@*     <span class="dismiss">🗙</span> *@
+@* </div> *@
+
+
+<section class="page">
+    <MudLayout Class="main">
+        <MudAppBar Elevation="1" Style="padding-top: env(safe-area-inset-top);">
+            <MudIcon Icon="@Icons.Material.Outlined.ArrowBackIosNew" Disabled="_disableBackBtn"></MudIcon>
+            <MudSpacer/>
+            <MudText Class="title">My Application</MudText>
+            <MudSpacer/>
+            <MudIconButton
+                Icon="@Icons.Material.Outlined.Menu"
+                Color="Color.Inherit"
+                Edge="Edge.Start"
+                OnClick="@((e) => DrawerToggle())"/>
+        </MudAppBar>
+        <MudDrawer @bind-Open="@_drawerOpen" Class="sidebar" Anchor="Anchor.End">
+            <NavMenu @bind-IsDarkMode="_isDarkMode"/>
+        </MudDrawer>
+        <MudMainContent Class="main">
+            @Body
+        </MudMainContent>
+    </MudLayout>
+</section>
+@* <div id="blazor-error-ui" data-nosnippet> *@
+@*     An unhandled error has occurred. *@
+@*     <a href="." class="reload">Reload</a> *@
+@*     <span class="dismiss">🗙</span> *@
+@* </div> *@
+
+@code {
+    bool _drawerOpen = true;
+    private bool _disableBackBtn = false;
+    private MudThemeProvider _mudThemeProvider;
+
+    private bool _isDarkMode;
+
+    void DrawerToggle()
+    {
+        _drawerOpen = !_drawerOpen;
+    }
+
+    protected override async Task OnAfterRenderAsync(bool firstRender)
+    {
+        if (firstRender)
+        {
+            await _mudThemeProvider.WatchSystemDarkModeAsync(OnSystemDarkModeChanged);
+            StateHasChanged();
+        }
+    }
+
+    private Task OnSystemDarkModeChanged(bool newValue)
+    {
+        _isDarkMode = newValue;
+        StateHasChanged();
+        return Task.CompletedTask;
+    }
+    private EventCallback<bool> popupVisibleChanged;
+    private EventCallback<bool> PopupVisibleChanged
+    {
+        get 
+        {
+            if (popupVisibleChanged.Equals(EventCallback<bool>.Empty))
+                popupVisibleChanged= EventCallback.Factory.Create<bool>(this, s => _isDarkMode= s);
+            return popupVisibleChanged;
+        }
+    }
+
+}
