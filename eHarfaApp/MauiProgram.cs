@@ -16,6 +16,7 @@ public static class MauiProgram
 
         // Add device-specific services used by the eHarfaApp.Shared project
         builder.Services.AddSingleton<IFormFactor, FormFactor>();
+        builder.Services.AddSingleton<ISongService, SongService>();
 
         builder.Services.AddMudServices();
         builder.Services.AddMauiBlazorWebView();
