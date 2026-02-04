@@ -1,3 +1,27 @@
+:root{
+    --top-bar-height: 60px;
+    --scrollbar-thickness-android: 4px; /* the thickness of the scrollbar gutter displayed on android only */
+
+    --safe-area-inset-top: max(env(safe-area-inset-top), var(--native-window-inset-top, 0px));
+    --safe-area-inset-bottom: max(env(safe-area-inset-bottom), var(--native-window-inset-bottom, 0px));
+    --safe-area-inset-left: max(env(safe-area-inset-left), var(--native-window-inset-left, 0px));
+    --safe-area-inset-right: max(env(safe-area-inset-right), var(--native-window-inset-right, 0px));
+}
+
+:root{
+    --color-neutral-white: #FFFFFF;
+    --color-neutral-black: #000000;
+    --color-neutral-grey200: #EEEEEE;
+}
+
+:root {
+    --mudblazor-breakpoint-xs: 600px;
+    --mudblazor-breakpoint-sm: 960px;
+    --mudblazor-breakpoint-md: 1280px;
+    --mudblazor-breakpoint-lg: 1920px;
+    --mudblazor-breakpoint-xl: 2560px;
+}
+
 .status-bar-safe-area {
     display: none;
 }

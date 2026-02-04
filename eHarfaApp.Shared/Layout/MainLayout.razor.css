@@ -1,47 +1,91 @@
-.page {
-    position: relative;
+::deep html,
+::deep body {
+    position: fixed;
+    overflow: hidden;
+    width: 100%;
+    height: 100%;
+    overscroll-behavior: none; /* Modern standard to disable pull-to-refresh/bounce */
+    touch-action: none;
+
+}
+::deep #app {
+    touch-action: none; /* Blocks the browser from "pulling" the page */
+    position: fixed;
+    overflow: hidden;
+    width: 100%;
+    height: 100%;
+    overscroll-behavior: none; /* Modern standard to disable pull-to-refresh/bounce */
+}
+
+::deep .page {
+    position: fixed;
     display: flex;
     flex-direction: column;
+    height: 100%;
+    width: 100%;
+    overflow: hidden;
+    overscroll-behavior: none; /* Modern standard to disable pull-to-refresh/bounce */
+    touch-action: none;
 }
 
-main {
+::deep .main {
     flex: 1;
+    overflow: hidden;
 }
-
 ::deep .title{
-    font-size: 24px;
+    font-size: 18px;
     font-weight: 800;
     font-family: 'Inter', sans-serif;
 }
 
-.sidebar {
-    margin-top: env(safe-area-inset-top) !important;
+::deep .mud-toolbar-appbar {
+    height: var(--top-bar-height);
+    border-bottom: 1px solid var(--color-neutral-grey200);
+}
+
+::deep .sidebar {
+    margin-top: var(--top-bar-height) !important;
     margin-bottom: env(safe-area-inset-bottom) !important;
     width: 250px;
     height: 100vh;
-    position: sticky;
-    background-image: linear-gradient(180deg, rgb(5, 39, 103) 0%, #3a0647 70%);
+    position: absolute;
+    /*background-image: linear-gradient(180deg, rgb(5, 39, 103) 0%, #3a0647 70%);*/
 }
 
+::deep .mud-layout{
+    margin-inline: auto;
+}
+
+::deep .mud-main-content {
+    padding-right: var(--safe-area-inset-right);
+    padding-left: var(--safe-area-inset-left);
+    height: 100%;
+    overflow-x: hidden;
+    overflow-y: auto;
+}
+
+::deep .mud-main-content--with-top-bar {
+    height: calc(100% - var(--top-bar-height));
+}
 
 @media (max-width: 640.98px) {
 }
 
 @media (min-width: 641px) {
-    .page {
+    ::deep .page {
         flex-direction: row;
     }
     
-    .sidebar {
+    ::deep .sidebar {
         width: 250px;
         height: 100vh;
-        position: relative;
+        position: fixed;
         margin-bottom: env(safe-area-inset-bottom) !important;
         margin-top: env(safe-area-inset-top) !important;
     }
 }
 
-#blazor-error-ui {
+::deep #blazor-error-ui {
     background: lightyellow;
     bottom: 0;
     box-shadow: 0 -1px 2px rgba(0, 0, 0, 0.2);
@@ -54,7 +98,7 @@ main {
     z-index: 1000;
 }
 
-    #blazor-error-ui .dismiss {
+    ::deep #blazor-error-ui .dismiss {
         cursor: pointer;
         position: absolute;
         right: 0.75rem;

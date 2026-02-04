@@ -3,49 +3,47 @@
 @inject IFormFactor FormFactor
 
 <section>
-    <PageTitle>Home</PageTitle>
-    <SectionContent SectionName="page-title">Home</SectionContent>
+    <PageTitle>@PageTitle</PageTitle>
+    <SectionContent SectionName="page-title" >@PageTitle</SectionContent>
 
-    <MudContainer>
+    <MudContainer >
         <MudTextField
             T="string"
             bind-Value="Search"
             Label="Cautare"
             Adornment="Adornment.End"
             AdornmentIcon="@Icons.Material.Outlined.Search" />
-        
-        <MudTabs
-            Outlined="true"
-            ApplyEffectsToContainer="true"
-            Class="mt-8"
-            TabPanelsClass="py-0"
-            Style="height:75vh;"
-            Border="true"
-            Centered="true"
-            MinimumTabWidth="20px"
-            @bind-ActivePanelIndex="SelectedCategory"
-            PrevIcon="@Icons.Material.Filled.SkipPrevious"
-            NextIcon="@Icons.Material.Filled.SkipNext"
-            Position="Position.Bottom"
-        >
-            @foreach (var category in Categories)
-            {
-                <MudTabPanel ID="@category.Id" Icon="@category.Icon">
-                    <MudContainer Style="max-height: calc(100vh - 300px);" Class="overflow-x-auto">
-                        <MudList T="string">
-                            @for (var i = 0; i < FilteredSongs.Count(); i++)
-                            {
-                                <MudListItem 
-                                    T="string" 
-                                    Text=@($"{i}. {FilteredSongs[i].Title}") 
-                                    Value="@FilteredSongs[i].Id" 
-                                    OnClick="(e) => SelectSong(e)">
-                                </MudListItem>     
-                            }
-                        </MudList>
-                    </MudContainer>
-                </MudTabPanel>
-            }
-        </MudTabs>
+        <MudSwipeArea OnSwipeEnd="HandleSwipe" Style="width: 100%;">
+            <MudTabs
+                Outlined="false"
+                ApplyEffectsToContainer="false"
+                Class="mt-8"
+                TabPanelsClass="py-0"
+                Style="height:75vh;"
+                Border="false"
+                Centered="true"
+                MinimumTabWidth="30px"
+                @bind-ActivePanelIndex="SelectedCategory"
+                Position="Position.Bottom"
+            >
+                @foreach (var category in Categories)
+                {
+                    <MudTabPanel ID="@category.Id" Icon="@category.Icon" >
+                        <MudContainer Style="max-height: calc(100vh - 300px);" Class="d-flex align-start overflow-x-auto">
+                            <MudList T="string" SelectedValueChanged="SelectSong" Class="align-start">
+                                @for (var i = 0; i < FilteredSongs.Count(); i++)
+                                {
+                                    <MudListItem 
+                                        T="string" 
+                                        Text=@($"{i}. {FilteredSongs[i].Title}") 
+                                        Value="@FilteredSongs[i].Id" >
+                                    </MudListItem>     
+                                }
+                            </MudList>
+                        </MudContainer>
+                    </MudTabPanel>
+                }
+            </MudTabs>
+        </MudSwipeArea>
     </MudContainer>
 </section>
