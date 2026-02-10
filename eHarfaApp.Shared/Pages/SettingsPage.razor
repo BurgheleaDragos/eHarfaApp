@@ -1,21 +1,66 @@
 ﻿@page "/settings"
+@using System.Globalization
+@using Color = MudBlazor.Color
 
 <section>
-    <PageTitle>Settings</PageTitle>
-    <SectionContent SectionName="page-title">Settings</SectionContent>
+    <PageTitle>Setari</PageTitle>
+    <SectionContent SectionName="page-title">Setari</SectionContent>
 
-    <h1>Settings</h1>
-
-    <p role="status">Current count: @currentCount</p>
-
-    <MudButton Class="btn btn-primary" OnClick="@IncrementCount">Click me</MudButton>
+    <MudContainer Class="d-flex flex-1 flex-column align-content-start gap-2 my-6">
+        <MudContainer Class="d-flex flex-1 align-content-around">
+            <MudText
+                Typo="Typo.body2"
+                Class="d-inline-flex">
+                Dimensiune font:
+            </MudText>
+            <MudTextField 
+                Class="d-inline-flex"
+                T="int"
+                Counter="3"
+                Variant="Variant.Text"
+                @bind-Value="@_settings.FontSize">@_settings?.FontSize</MudTextField>
+        </MudContainer>
+        <MudContainer Class="d-flex flex-1 align-content-around">
+            <MudText Class="d-inline-flex h1">Familie font:</MudText>
+            <MudSelect
+                T="string"
+                Class="d-inline-flex h3"
+                bind-Value="@_settings?.FontFamily">
+                @foreach (var family in _fontFamilies)
+                {
+                    <MudSelectItem Value="family">@family</MudSelectItem>
+                }
+            </MudSelect>
+        </MudContainer>
+        <MudContainer Class="d-flex flex-1 align-content-around">
+            <MudText Class="d-inline-flex h3">Contact:</MudText>
+            <MudContainer Class="d-inline-flex h3">@_settings?.Contact</MudContainer>
+        </MudContainer>
+        <MudStack Class="d-flex flex-1 align-content-around d-inline">
+            <MudText Class="d-inline-flex align-self-center h3">Mod noapte</MudText>
+            <MudToggleGroup
+                T="NightMode"
+                SelectionMode="SelectionMode.SingleSelection"
+                @bind-Value="@NightMode"
+                FixedContent
+                CheckMark
+                Color="Color.Primary"
+                Class="mx-4 d-inline-flex">
+                <MudToggleItem Value="@Pages.NightMode.Dark" Text="@nameof(NightMode.Dark)" />
+                <MudToggleItem Value="@Pages.NightMode.Light" Text="@nameof(NightMode.Light)" />
+                <MudToggleItem Value="@Pages.NightMode.Auto" Text="@nameof(NightMode.Auto)" />
+            </MudToggleGroup>
+        </MudStack>
+        <MudContainer Class="d-flex flex-1 ali2gn-content-around d-block-flex">
+            <MudContainer Class="d-inline-flex h3">
+                Sincronizare cantari:
+                <MudButton Color="Color.Info" Variant="Variant.Filled" OnClick="SyncData">
+                    Start
+                </MudButton>
+            </MudContainer>
+            <MudContainer Class="d-inline-flex h3">
+                Data ultima sincronizare: <b>@_settings?.LastSynchronized.ToString(CultureInfo.CurrentCulture)</b>
+            </MudContainer>
+        </MudContainer>
+    </MudContainer>
 </section>
-@code {
-    private int currentCount = 0;
-
-    private void IncrementCount()
-    {
-        currentCount++;
-    }
-
-}

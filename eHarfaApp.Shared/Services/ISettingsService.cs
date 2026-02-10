@@ -1,0 +1,11 @@
+using eHarfaApp.Shared.DAL;
+
+namespace eHarfaApp.Shared.Services;
+
+public interface ISettingsService
+{
+    Task<Settings> ReadSettingsAsync();
+    Task SaveSettingsAsync(Settings settings);
+    Settings GetDefaultSettings();
+    Task<List<string>> GetFontFamiliesAsync();
+}

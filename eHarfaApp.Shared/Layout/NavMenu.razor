@@ -16,27 +16,4 @@
             IconColor="Color.Primary"
             Icon="@Icons.Material.Outlined.Soap">Song 123</MudNavLink>
     </MudContainer>
-    <MudSwitch @bind-Value="@IsDarkMode" Label="Mod noapte" Class="mx-4"/>
 </MudNavMenu>
-
-
-@code
-{
-    private bool _isDarkMode;
-    
-    [Parameter]
-    public bool IsDarkMode
-    {
-        get => _isDarkMode;
-        set
-        {
-            if (_isDarkMode == value) return;
-            _isDarkMode = value;
-            IsDarkModeChanged.InvokeAsync(value);
-        }
-    }
-
-    [Parameter]
-    public EventCallback<bool> IsDarkModeChanged { get; set; }   
-    
-}

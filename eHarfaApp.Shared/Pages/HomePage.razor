@@ -16,7 +16,7 @@
         <MudSwipeArea OnSwipeEnd="HandleSwipe" Style="width: 100%;">
             <MudTabs
                 Outlined="false"
-                ApplyEffectsToContainer="false"
+                ApplyEffectsToContainer="true"
                 Class="mt-8"
                 TabPanelsClass="py-0"
                 Style="height:75vh;"
@@ -29,18 +29,23 @@
                 @foreach (var category in Categories)
                 {
                     <MudTabPanel ID="@category.Id" Icon="@category.Icon" >
-                        <MudContainer Style="max-height: calc(100vh - 300px);" Class="d-flex align-start overflow-x-auto">
-                            <MudList T="string" SelectedValueChanged="SelectSong" Class="align-start">
+                        <MudPaper Style="max-height: calc(100vh - 300px);" Class="d-flex align-start overflow-x-auto">
+                            <MudList 
+                                T="string" 
+                                SelectedValueChanged="SelectSong" 
+                                Class="align-start"
+                                Padding="true"
+                                Color="Color.Info">
                                 @for (var i = 0; i < FilteredSongs.Count(); i++)
                                 {
-                                    <MudListItem 
+                                    <MudListItem
                                         T="string" 
                                         Text=@($"{i}. {FilteredSongs[i].Title}") 
                                         Value="@FilteredSongs[i].Id" >
                                     </MudListItem>     
                                 }
                             </MudList>
-                        </MudContainer>
+                        </MudPaper>
                     </MudTabPanel>
                 }
             </MudTabs>

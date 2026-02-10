@@ -26,7 +26,7 @@
                 OnClick="@((e) => DrawerToggle())"/>
         </MudAppBar>
         <MudDrawer @bind-Open="@_drawerOpen" Class="sidebar" Anchor="Anchor.End">
-            <NavMenu @bind-IsDarkMode="_isDarkMode"/>
+            <NavMenu/>
         </MudDrawer>
         <MudMainContent Class="main m2a-4">
             @Body 
