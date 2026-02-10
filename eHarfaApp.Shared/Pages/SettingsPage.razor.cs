@@ -74,5 +74,6 @@ public partial class SettingsPage: ComponentBase
     private Task SyncData(MouseEventArgs arg)
     {
         _settings.LastSynchronized = DateTime.Now;
+        return Task.CompletedTask;
     }
 }
