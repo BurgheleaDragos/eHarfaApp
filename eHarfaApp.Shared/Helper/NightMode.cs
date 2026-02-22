@@ -1,4 +1,4 @@
-namespace eHarfaApp.Shared.Pages;
+namespace eHarfaApp.Shared.Helper;
 
 public enum NightMode
 {

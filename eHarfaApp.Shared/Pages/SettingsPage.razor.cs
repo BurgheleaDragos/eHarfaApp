@@ -17,11 +17,12 @@ public partial class SettingsPage: ComponentBase
     private IApiService ApiService { get; set; } = null!;
 
     private Settings _settings = null!;
-    private NightMode _nightMode;
+    private bool _nightMode;
     private List<string> _fontFamilies = [];
 
     [Parameter]
-    public NightMode NightMode
+    [CascadingParameter(Name = "DarkMode")]
+    public bool NightMode
     {
         get => _nightMode;
         set
@@ -32,8 +33,8 @@ public partial class SettingsPage: ComponentBase
         }
     }
 
-    [Parameter]
-    public EventCallback<NightMode> IsDarkModeChanged { get; set; }   
+    [CascadingParameter(Name = "DarkModeChanged")]
+    public EventCallback<bool> IsDarkModeChanged { get; set; }   
     
     protected override async Task OnInitializedAsync()
     {
