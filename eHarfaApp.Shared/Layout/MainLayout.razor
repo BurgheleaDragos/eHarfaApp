@@ -1,7 +1,7 @@
 ﻿@inherits LayoutComponentBase
 
 @* Required *@
-<MudThemeProvider IsDarkMode="@_isDarkMode" @ref="_mudThemeProvider"/>
+<MudThemeProvider @bind-IsDarkMode="@_isDarkMode" @ref="_mudThemeProvider"/>
 <MudPopoverProvider />
 
 @* Needed for dialogs *@
@@ -12,7 +12,7 @@
 
 <section class="page">
     <MudLayout Class="main">
-        <MudAppBar Elevation="1" Style="padding-top: env(safe-area-inset-top);">
+        <MudAppBar Elevation="1" Class="pt-safe-area-inset-top z-index-9999">
             <MudIcon Icon="@Icons.Material.Outlined.ArrowBackIosNew" Disabled="_disableBackBtn"></MudIcon>
             <MudSpacer/>
             <MudText Class="title">
@@ -28,9 +28,13 @@
         <MudDrawer @bind-Open="@_drawerOpen" Class="sidebar" Anchor="Anchor.End">
             <NavMenu/>
         </MudDrawer>
-        <MudMainContent Class="main m2a-4">
-            @Body 
-        </MudMainContent>
+        <CascadingValue Name="DarkMode" Value="@_isDarkMode">
+            <CascadingValue Name="DarkModeChanged" Value="@OnSystemDarkModeChanged">
+                <MudMainContent Class="main m2a-4 pt-safe-area-inset-top">
+                    @Body 
+                </MudMainContent>
+            </CascadingValue>
+        </CascadingValue>
     </MudLayout>
 </section>
 @* <div id="blazor-error-ui" data-nosnippet> *@

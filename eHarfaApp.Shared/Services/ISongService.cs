@@ -7,4 +7,5 @@ public interface ISongService
 {
     Task<List<Song>> GetSongsAsync();
     Task<List<SongCategory>> GetCategoriesAsync();
+    Task<Song> GetSongByIdAsync(string id);
 }

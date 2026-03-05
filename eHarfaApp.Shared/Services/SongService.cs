@@ -64,4 +64,20 @@ public class SongService : ISongService
         };
         return Task.FromResult(categories);
     }
+
+    public async Task<Song> GetSongByIdAsync(string id)
+    {
+        var category = await GetCategoriesAsync();
+        var song = new Song()
+        {
+            Id = id,
+            Title = "Din Beer-Șeba, Iacov, când pornise în călătoria lui înspre Haran",
+            Category = category[1],
+            CategoryId = "1",
+            Content = "1. Din Beer-Șeba, Iacov, când pornise în călătoria lui înspre Haran,\\nDupă cum Isaac îi poruncise să rămână la Padan-Aram,\\nDupă-o zi de grea călătorie, seara se lăsase și el se opri,\\nCăci lumina soarelui, cea vie, coborâtu-se spre asfințit.\\n\\nR1: Iacov își luase cu drag o piatră\\nR: Și și-o puse-astfel sub capul lui.\\nR: „O, Doamne, ce noapte minunată,\\nR: Să dormi în mijlocul pustiului!”\\n\\n2. Dar Domnul, iată, că îi arată, îl cuprinde mreaja unui vis stingher.\\nEl vede o scară minunată, de pe pământ ce ajungea la cer.\\nDar, pe-această scară ne-nsemnată, se plimbau îngerii și în sus, și-n jos,\\nÎngerii Dumnezeului cel mare. - Iată, dragii mei, ce vis frumos! -\\n\\nR2: Dar Domnul sta privind deasupra scării\\nR: Și lui Iacov îi cuvânta:\\nR: „Pământul și ce are suflare,\\nR: Toate seminției tale îi voi da.\\n\\n3. Te vei întinde la-apus și la răsărit, la miazănoapte și până la miazăzi,\\nȘi toate semințiile pământului, toate ție ți le voi dărui.”\\nȘi, sculându-se de dimineață, a luat piatra și-a fixat-o în pământ,\\nCa loc de aducere aminte pentru Dumnezeu-Acela sfânt.\\n\\nR3: Plin de frică, Iacov, atunci își zise:\\nR: „Acest loc e-așa de minunat,\\nR: Căci aici e Casa lui Dumnezeu\\nR: Și poarta cerului înstelat!”\\n\\n4. Iacov a făcut o juruință, căci dacă Domnu-n viață îl va ocroti,\\nPământul și ce are suflare, lui Dumnezeu Îi va dărui.\"",
+            Scale = "Mi major"
+        };
+        
+        return await Task.FromResult(song);
+    }
 }

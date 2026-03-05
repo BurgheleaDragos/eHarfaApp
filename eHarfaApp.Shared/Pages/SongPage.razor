@@ -1,71 +1,33 @@
 ﻿@page "/song/{id}"
 
 <section>
-    <PageTitle>Song @Id </PageTitle>
-    <SectionContent SectionName="page-title">Song @Id </SectionContent>
-
-    <h1>Song</h1>
-
-    <p>This component demonstrates showing data.</p>
-
-    @if (forecasts == null)
-    {
-        <p>
-            <em>Loading...</em>
-        </p>
-    }
-    else
-    {
-        <table class="table">
-            <thead>
-            <tr>
-                <th>Date</th>
-                <th>Temp. (C)</th>
-                <th>Temp. (F)</th>
-                <th>Summary</th>
-            </tr>
-            </thead>
-            <tbody>
-            @foreach (var forecast in forecasts)
-            {
-                <tr>
-                    <td>@forecast.Date.ToShortDateString()</td>
-                    <td>@forecast.TemperatureC</td>
-                    <td>@forecast.TemperatureF</td>
-                    <td>@forecast.Summary</td>
-                </tr>
-            }
-            </tbody>
-        </table>
-    }
+    <PageTitle>@Song?.Title</PageTitle>
+    <SectionContent SectionName="page-title">@Song?.Title</SectionContent>
+    
+    <MudStack AlignItems="AlignItems.Start">
+        <MudText Typo="Typo.h6" Class="scale pt-4" Align="Align.Left">
+            @Song?.Scale
+        </MudText>
+        <MudText
+            Align="Align.Left"
+            Class="content py-4 mx-3"
+            Style="margin-bottom:0px;"
+            Typo="Typo.body1">
+            @((MarkupString)Song?.Content!)
+        </MudText>
+        <MudDivider />
+        <MudFabMenu 
+            Fixed="true"
+            StartIcon="@Icons.Material.Outlined.AddCircleOutline" 
+            Color="Color.Primary" 
+            DampenItemsBackgroundColor="true" 
+            UseCloseIcon="false" 
+            Size="Size.Large"
+            Style="bottom: 100px;"
+            >
+            <MudFabMenuItem EndIcon="@Icons.Material.Outlined.Favorite" Color="Color.Primary" Size="Size.Large" OnClick="AddToFavourites"/>
+            <MudFabMenuItem EndIcon="@Icons.Material.Outlined.ImportExport" Color="Color.Primary" Size="Size.Large" OnClick="ExportPDF" />
+            <MudFabMenuItem EndIcon="@Icons.Material.Outlined.Share" Color="Color.Primary" Size="Size.Large" OnClick="ShareSong" />
+        </MudFabMenu>
+    </MudStack>
 </section>
-@code {
-    private WeatherForecast[]? forecasts;
-    
-    [Parameter]
-    public string Id { get; set; }
-    
-    protected override async Task OnInitializedAsync()
-    {
-        // Simulate asynchronous loading to demonstrate a loading indicator
-        await Task.Delay(500);
-
-        var startDate = DateOnly.FromDateTime(DateTime.Now);
-        var summaries = new[] { "Freezing", "Bracing", "Chilly", "Cool", "Mild", "Warm", "Balmy", "Hot", "Sweltering", "Scorching" };
-        forecasts = Enumerable.Range(1, 5).Select(index => new WeatherForecast
-        {
-            Date = startDate.AddDays(index),
-            TemperatureC = Random.Shared.Next(-20, 55),
-            Summary = summaries[Random.Shared.Next(summaries.Length)]
-        }).ToArray();
-    }
-
-    private class WeatherForecast
-    {
-        public DateOnly Date { get; set; }
-        public int TemperatureC { get; set; }
-        public string? Summary { get; set; }
-        public int TemperatureF => 32 + (int)(TemperatureC / 0.5556);
-    }
-
-}

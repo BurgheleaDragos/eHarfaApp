@@ -32,10 +32,20 @@
     flex: 1;
     overflow: hidden;
 }
+
+::deep .pt-safe-area-inset-top{
+    padding-top: env(safe-area-inset-top);
+}
+
+::deep .z-index-9999{
+    z-index: 9999;
+}
+
 ::deep .title{
     font-size: 18px;
     font-weight: 800;
     font-family: 'Inter', sans-serif;
+    text-align: center;
 }
 
 ::deep .mud-toolbar-appbar {
@@ -59,7 +69,7 @@
 ::deep .mud-main-content {
     padding-right: var(--safe-area-inset-right);
     padding-left: var(--safe-area-inset-left);
-    height: 100%;
+    height: calc(100dvh - var(--safe-area-inset-top)) ;
     overflow-x: hidden;
     overflow-y: auto;
 }
