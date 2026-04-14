@@ -2,11 +2,12 @@ using eHarfaApp.Shared.DAL;
 using eHarfaApp.Shared.Services;
 using Microsoft.AspNetCore.Components;
 using Microsoft.AspNetCore.Components.Web;
+using Microsoft.JSInterop;
 using MudBlazor;
 
 namespace eHarfaApp.Shared.Pages;
 
-public partial class SongPage: ComponentBase
+public partial class SongPage : ComponentBase, IAsyncDisposable
 {
     [Inject]
     private ISnackbar Snackbar { get; set; } = null!;
@@ -17,16 +18,38 @@ public partial class SongPage: ComponentBase
     [Inject]
     private IPdfExportService PdfExportService { get; set; } = null!;
 
+    [Inject]
+    private IJSRuntime JS { get; set; } = null!;
+
     [Parameter]
     public string Id { get; set; } = string.Empty;
 
     private Song? Song { get; set; }
+    private double _fontSize = 1.0;
+    private string ContentStyle => $"font-size:{_fontSize.ToString(System.Globalization.CultureInfo.InvariantCulture)}rem;";
+    private DotNetObjectReference<SongPage>? _dotNetRef;
     private MarkupString FormattedContent =>
         new(FormatSongContent(Song?.Content));
-    
+
     protected override async Task OnParametersSetAsync()
     {
         Song = await GetSongByIdAsync(Id);
+    }
+
+    protected override async Task OnAfterRenderAsync(bool firstRender)
+    {
+        if (firstRender)
+        {
+            _dotNetRef = DotNetObjectReference.Create(this);
+            await JS.InvokeVoidAsync("eHarfa.initZoom", "song-content", _dotNetRef);
+        }
+    }
+
+    [JSInvokable]
+    public void OnFontSizeChanged(double fontSize)
+    {
+        _fontSize = fontSize;
+        StateHasChanged();
     }
 
     private async Task<Song?> GetSongByIdAsync(string id)
@@ -73,6 +96,12 @@ public partial class SongPage: ComponentBase
     {
         Snackbar.Add("Share Song", Severity.Info);
         return Task.CompletedTask;
+    }
+
+    public ValueTask DisposeAsync()
+    {
+        _dotNetRef?.Dispose();
+        return ValueTask.CompletedTask;
     }
 
     private static string FormatSongContent(string? content)

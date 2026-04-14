@@ -5,17 +5,16 @@
     <SectionContent SectionName="page-title">@Song?.Title</SectionContent>
     
     <MudStack AlignItems="AlignItems.Start">
-        <MudText Typo="Typo.h6" Class="scale pt-4" Align="Align.Left">
+        <MudText Typo="Typo.h6" Class="scale pt-4 pl-2" Align="Align.Left">
             @Song?.Scale
         </MudText>
         <MudText
             Align="Align.Left"
-            Class="content py-4 mx-3"
-            Style="margin-bottom:0px;"
+            Class="song-content content py-4 mx-3"
+            Style="@ContentStyle"
             Typo="Typo.body1">
             @FormattedContent
         </MudText>
-        <MudDivider />
         <MudFabMenu 
             Fixed="true"
             StartIcon="@Icons.Material.Outlined.AddCircleOutline" 
