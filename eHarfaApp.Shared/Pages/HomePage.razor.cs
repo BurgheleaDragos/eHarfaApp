@@ -8,21 +8,26 @@ namespace eHarfaApp.Shared.Pages;
 public partial class HomePage: ComponentBase
 {
     [Inject]
-    public ISongService SongService { get; set; }
+    public ISongService SongService { get; set; } = null!;
     
     [Inject]
-    public NavigationManager NavigationManager { get; set; }
+    public NavigationManager NavigationManager { get; set; } = null!;
     
-    private string Search { get; set; }
+    private string Search { get; set; } = string.Empty;
 
-    private List<Song> Songs { get; set; }
+    private List<Song> Songs { get; set; } = [];
     private List<Song> FilteredSongs => 
         Songs
-            .Where(e => e.CategoryId.Equals(Categories[SelectedCategory].Id, StringComparison.InvariantCultureIgnoreCase))
+            .Where(e =>
+                Categories.Count > 0 &&
+                e.CategoryId.Equals(Categories[SelectedCategory].Id, StringComparison.InvariantCultureIgnoreCase) &&
+                (string.IsNullOrWhiteSpace(Search) ||
+                 e.Title.Contains(Search, StringComparison.InvariantCultureIgnoreCase) ||
+                 (e.Content?.Contains(Search, StringComparison.InvariantCultureIgnoreCase) ?? false)))
             .ToList();
-    private List<SongCategory> Categories { get; set; } = null!;
+    private List<SongCategory> Categories { get; set; } = [];
     private int SelectedCategory { get; set; }
-    private string PageTitle => Categories[SelectedCategory].Title;
+    private string PageTitle => Categories.Count == 0 ? "Cântări" : Categories[SelectedCategory].Title;
 
     protected override async Task OnInitializedAsync()
     {
@@ -31,24 +36,25 @@ public partial class HomePage: ComponentBase
         await base.OnInitializedAsync();
     }
     
-    private const int MaxTabs = 16; // Total number of tabs
-    
     private void HandleSwipe(SwipeEventArgs e)
     {
-        if (e.SwipeDirection == SwipeDirection.RightToLeft && SelectedCategory < MaxTabs - 1)
+        var maxTabs = Categories.Count;
+
+        if (e.SwipeDirection == SwipeDirection.RightToLeft && SelectedCategory < maxTabs - 1)
         {
-            SelectedCategory++; // Swipe left to go to next tab
+            SelectedCategory++;
         }
         else if (e.SwipeDirection == SwipeDirection.LeftToRight && SelectedCategory > 0)
         {
-            SelectedCategory--; // Swipe right to go to previous tab
+            SelectedCategory--;
         }
     }
+
     private async Task GetSongsAsync()
     {
         try
         {
-            Songs = await SongService.GetSongsAsync().ConfigureAwait(false);
+            Songs = await SongService.GetSongsFromDatabaseAsync().ConfigureAwait(false);
         }
         catch (Exception ex)
         {
@@ -60,11 +66,16 @@ public partial class HomePage: ComponentBase
     {
         try
         {
-            Categories = await SongService.GetCategoriesAsync().ConfigureAwait(false);
+            Categories = await SongService.GetCategoriesFromDatabaseAsync().ConfigureAwait(false);
         }
         catch (Exception ex)
         {
             Console.WriteLine(ex.Message);
+        }
+
+        if (SelectedCategory >= Categories.Count)
+        {
+            SelectedCategory = 0;
         }
     }
 

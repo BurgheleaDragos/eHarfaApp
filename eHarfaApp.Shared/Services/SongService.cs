@@ -1,83 +1,236 @@
 using eHarfaApp.Shared.DAL;
-using eHarfaApp.Shared.Pages;
 using MudBlazor;
 
 namespace eHarfaApp.Shared.Services;
 
-public class SongService : ISongService
+public class SongService(SqliteDatabase sqliteDatabase) : ISongService
 {
     public Task<List<Song>> GetSongsAsync()
     {
-        List<Song> songs = new List<Song>();
-
-        for (var i = 1; i < 100; i++)
-        {
-            songs.Add(new Song()
-            {
-                Id = i.ToString(),
-                Scale = "Do minor",
-                Title = $"Cantare nr {i}",
-                Content = $"Cantare continut nr {i}",
-                CategoryId = $"{i%16}"
-            });
-        }
-        
-        return Task.FromResult(songs);
+        return Task.FromResult(SeedData.CreateSongs());
     }
 
     public Task<List<SongCategory>> GetCategoriesAsync()
     {
-        List<SongCategory> categories = new List<SongCategory>
-        {
-            new(id: "1", title: "Cântări despre anul nou și trecerea timpului", 
-                icon: Icons.Material.Filled.Event),
-            new(id: "2", title: "Cântări despre binecuvântarea copiilor și despre părinți",
-                icon: Icons.Material.Filled.ChildCare),
-            new(id: "3", title: "Cântări despre botezul în apă și venirea la pocăință",
-                icon:Icons.Material.Filled.Water),
-            new(id: "4", title: "Cântări despre căsătorie și dragoste",
-                icon:Icons.Material.Filled.Favorite),
-            new(id: "5", title: "Cântări despre Cina cea de taină și suferințele Domnului Isus",
-                icon:Icons.Material.Filled.Bloodtype),
-            new(id: "6", title: "Cântări despre Duhul Sfânt",
-                icon:Icons.Material.Filled.FlashOn),
-            new(id: "7", title: "Cântări pentru evanghelizare",
-                icon:Icons.Material.Filled.Campaign),
-            new(id: "8", title: "Cântări pentru mângâiere și îmbărbătare",
-                icon:Icons.Material.Filled.VolunteerActivism),
-            new(id: "9", title: "Cântări despre îndemn la veghere și pocăință",
-                icon:Icons.Material.Filled.Lightbulb),
-            new(id: "10", title: "Cântări despre înmormântare",
-                icon:Icons.Material.Filled.HeartBroken),
-            new(id: "11", title: "Cântări despre învierea și înălțarea Domnului",
-                icon:Icons.Material.Filled.ArrowUpward),
-            new(id: "12", title: "Cântări de laudă, mulțumire și bucurie",
-                icon:Icons.Material.Filled.SentimentVerySatisfied),
-            new(id: "13", title: "Cântări despre nașterea Domnului",
-                icon:Icons.Material.Filled.StarPurple500),
-            new(id: "14", title: "Cântări despre predarea în slujba lui Dumnezeu",
-                icon:Icons.Material.Filled.Handshake),
-            new(id: "15", title: "Cântări despre revenirea Domnului și Patria cerească",
-                icon:Icons.Material.Filled.CloudSync),
-            new(id: "16", title: "Cântări pentru timpul de rugăciune",
-                icon:Icons.Material.Filled.SelfImprovement),
-        };
-        return Task.FromResult(categories);
+        return Task.FromResult(SeedData.CreateCategories());
     }
 
     public async Task<Song> GetSongByIdAsync(string id)
     {
-        var category = await GetCategoriesAsync();
-        var song = new Song()
+        return await Task.FromResult(SeedData.CreateSongById(id));
+    }
+
+    public async Task<List<Song>> GetSongsFromDatabaseAsync()
+    {
+        await sqliteDatabase.EnsureCreatedAsync().ConfigureAwait(false);
+
+        await using var connection = sqliteDatabase.CreateConnection();
+        await connection.OpenAsync().ConfigureAwait(false);
+
+        var categories = await GetCategoriesFromDatabaseAsync().ConfigureAwait(false);
+        var categoryLookup = categories.ToDictionary(category => category.Id, StringComparer.OrdinalIgnoreCase);
+        var songs = new List<Song>();
+
+        await using var command = connection.CreateCommand();
+        command.CommandText =
+            """
+            SELECT Id, Title, Scale, Content, CategoryId
+            FROM Songs
+            ORDER BY CAST(Id AS INTEGER), Id;
+            """;
+
+        await using var reader = await command.ExecuteReaderAsync().ConfigureAwait(false);
+        while (await reader.ReadAsync().ConfigureAwait(false))
         {
-            Id = id,
-            Title = "Din Beer-Șeba, Iacov, când pornise în călătoria lui înspre Haran",
-            Category = category[1],
-            CategoryId = "1",
-            Content = "1. Din Beer-Șeba, Iacov, când pornise în călătoria lui înspre Haran,\\nDupă cum Isaac îi poruncise să rămână la Padan-Aram,\\nDupă-o zi de grea călătorie, seara se lăsase și el se opri,\\nCăci lumina soarelui, cea vie, coborâtu-se spre asfințit.\\n\\nR1: Iacov își luase cu drag o piatră\\nR: Și și-o puse-astfel sub capul lui.\\nR: „O, Doamne, ce noapte minunată,\\nR: Să dormi în mijlocul pustiului!”\\n\\n2. Dar Domnul, iată, că îi arată, îl cuprinde mreaja unui vis stingher.\\nEl vede o scară minunată, de pe pământ ce ajungea la cer.\\nDar, pe-această scară ne-nsemnată, se plimbau îngerii și în sus, și-n jos,\\nÎngerii Dumnezeului cel mare. - Iată, dragii mei, ce vis frumos! -\\n\\nR2: Dar Domnul sta privind deasupra scării\\nR: Și lui Iacov îi cuvânta:\\nR: „Pământul și ce are suflare,\\nR: Toate seminției tale îi voi da.\\n\\n3. Te vei întinde la-apus și la răsărit, la miazănoapte și până la miazăzi,\\nȘi toate semințiile pământului, toate ție ți le voi dărui.”\\nȘi, sculându-se de dimineață, a luat piatra și-a fixat-o în pământ,\\nCa loc de aducere aminte pentru Dumnezeu-Acela sfânt.\\n\\nR3: Plin de frică, Iacov, atunci își zise:\\nR: „Acest loc e-așa de minunat,\\nR: Căci aici e Casa lui Dumnezeu\\nR: Și poarta cerului înstelat!”\\n\\n4. Iacov a făcut o juruință, căci dacă Domnu-n viață îl va ocroti,\\nPământul și ce are suflare, lui Dumnezeu Îi va dărui.\"",
-            Scale = "Mi major"
+            var categoryId = reader.GetString(reader.GetOrdinal("CategoryId"));
+            categoryLookup.TryGetValue(categoryId, out var category);
+
+            songs.Add(new Song
+            {
+                Id = reader.GetString(reader.GetOrdinal("Id")),
+                Title = reader.GetString(reader.GetOrdinal("Title")),
+                Scale = reader.GetString(reader.GetOrdinal("Scale")),
+                Content = reader.IsDBNull(reader.GetOrdinal("Content"))
+                    ? null
+                    : reader.GetString(reader.GetOrdinal("Content")),
+                CategoryId = categoryId,
+                Category = category ?? new SongCategory { Id = categoryId, Title = string.Empty, Icon = Icons.Material.Filled.Category }
+            });
+        }
+
+        return songs;
+    }
+
+    public async Task<List<SongCategory>> GetCategoriesFromDatabaseAsync()
+    {
+        await sqliteDatabase.EnsureCreatedAsync().ConfigureAwait(false);
+
+        await using var connection = sqliteDatabase.CreateConnection();
+        await connection.OpenAsync().ConfigureAwait(false);
+
+        var categories = new List<SongCategory>();
+
+        await using var command = connection.CreateCommand();
+        command.CommandText =
+            """
+            SELECT Id, Title, Icon
+            FROM SongCategories
+            ORDER BY CAST(Id AS INTEGER), Id;
+            """;
+
+        await using var reader = await command.ExecuteReaderAsync().ConfigureAwait(false);
+        while (await reader.ReadAsync().ConfigureAwait(false))
+        {
+            categories.Add(new SongCategory
+            {
+                Id = reader.GetString(reader.GetOrdinal("Id")),
+                Title = reader.GetString(reader.GetOrdinal("Title")),
+                Icon = reader.GetString(reader.GetOrdinal("Icon"))
+            });
+        }
+
+        return categories;
+    }
+
+    public async Task<Song?> GetSongByIdFromDatabaseAsync(string id)
+    {
+        await sqliteDatabase.EnsureCreatedAsync().ConfigureAwait(false);
+
+        await using var connection = sqliteDatabase.CreateConnection();
+        await connection.OpenAsync().ConfigureAwait(false);
+
+        await using var command = connection.CreateCommand();
+        command.CommandText =
+            """
+            SELECT s.Id, s.Title, s.Scale, s.Content, s.CategoryId, c.Title AS CategoryTitle, c.Icon
+            FROM Songs s
+            INNER JOIN SongCategories c ON c.Id = s.CategoryId
+            WHERE s.Id = @Id
+            LIMIT 1;
+            """;
+        command.Parameters.AddWithValue("@Id", id);
+
+        await using var reader = await command.ExecuteReaderAsync().ConfigureAwait(false);
+        if (await reader.ReadAsync().ConfigureAwait(false) == false)
+        {
+            return null;
+        }
+
+        return new Song
+        {
+            Id = reader.GetString(reader.GetOrdinal("Id")),
+            Title = reader.GetString(reader.GetOrdinal("Title")),
+            Scale = reader.GetString(reader.GetOrdinal("Scale")),
+            Content = reader.IsDBNull(reader.GetOrdinal("Content"))
+                ? null
+                : reader.GetString(reader.GetOrdinal("Content")),
+            CategoryId = reader.GetString(reader.GetOrdinal("CategoryId")),
+            Category = new SongCategory
+            {
+                Id = reader.GetString(reader.GetOrdinal("CategoryId")),
+                Title = reader.GetString(reader.GetOrdinal("CategoryTitle")),
+                Icon = reader.GetString(reader.GetOrdinal("Icon"))
+            }
         };
-        
-        return await Task.FromResult(song);
+    }
+
+    public async Task SaveSongsToDatabaseAsync(IEnumerable<Song> songs)
+    {
+        await sqliteDatabase.EnsureCreatedAsync().ConfigureAwait(false);
+
+        await using var connection = sqliteDatabase.CreateConnection();
+        await connection.OpenAsync().ConfigureAwait(false);
+        await using var transaction = connection.BeginTransaction();
+
+        foreach (var song in songs)
+        {
+            await using var command = connection.CreateCommand();
+            command.Transaction = transaction;
+            command.CommandText =
+                """
+                INSERT OR REPLACE INTO Songs (Id, Title, Scale, Content, CategoryId)
+                VALUES (@Id, @Title, @Scale, @Content, @CategoryId);
+                """;
+            command.Parameters.AddWithValue("@Id", song.Id);
+            command.Parameters.AddWithValue("@Title", song.Title);
+            command.Parameters.AddWithValue("@Scale", song.Scale);
+            command.Parameters.AddWithValue("@Content", (object?)song.Content ?? DBNull.Value);
+            command.Parameters.AddWithValue("@CategoryId", song.CategoryId);
+            await command.ExecuteNonQueryAsync().ConfigureAwait(false);
+        }
+
+        await transaction.CommitAsync().ConfigureAwait(false);
+    }
+
+    public async Task SaveCategoriesToDatabaseAsync(IEnumerable<SongCategory> categories)
+    {
+        await sqliteDatabase.EnsureCreatedAsync().ConfigureAwait(false);
+
+        await using var connection = sqliteDatabase.CreateConnection();
+        await connection.OpenAsync().ConfigureAwait(false);
+        await using var transaction = connection.BeginTransaction();
+
+        foreach (var category in categories)
+        {
+            await using var command = connection.CreateCommand();
+            command.Transaction = transaction;
+            command.CommandText =
+                """
+                INSERT OR REPLACE INTO SongCategories (Id, Title, Icon)
+                VALUES (@Id, @Title, @Icon);
+                """;
+            command.Parameters.AddWithValue("@Id", category.Id);
+            command.Parameters.AddWithValue("@Title", category.Title);
+            command.Parameters.AddWithValue("@Icon", category.Icon);
+            await command.ExecuteNonQueryAsync().ConfigureAwait(false);
+        }
+
+        await transaction.CommitAsync().ConfigureAwait(false);
+    }
+
+    public async Task UpdateSongInDatabaseAsync(Song song)
+    {
+        await sqliteDatabase.EnsureCreatedAsync().ConfigureAwait(false);
+
+        await using var connection = sqliteDatabase.CreateConnection();
+        await connection.OpenAsync().ConfigureAwait(false);
+
+        await using var command = connection.CreateCommand();
+        command.CommandText =
+            """
+            UPDATE Songs
+            SET Title = @Title,
+                Scale = @Scale,
+                Content = @Content,
+                CategoryId = @CategoryId
+            WHERE Id = @Id;
+            """;
+        command.Parameters.AddWithValue("@Id", song.Id);
+        command.Parameters.AddWithValue("@Title", song.Title);
+        command.Parameters.AddWithValue("@Scale", song.Scale);
+        command.Parameters.AddWithValue("@Content", (object?)song.Content ?? DBNull.Value);
+        command.Parameters.AddWithValue("@CategoryId", song.CategoryId);
+        await command.ExecuteNonQueryAsync().ConfigureAwait(false);
+    }
+
+    public async Task UpdateCategoryInDatabaseAsync(SongCategory category)
+    {
+        await sqliteDatabase.EnsureCreatedAsync().ConfigureAwait(false);
+
+        await using var connection = sqliteDatabase.CreateConnection();
+        await connection.OpenAsync().ConfigureAwait(false);
+
+        await using var command = connection.CreateCommand();
+        command.CommandText =
+            """
+            UPDATE SongCategories
+            SET Title = @Title,
+                Icon = @Icon
+            WHERE Id = @Id;
+            """;
+        command.Parameters.AddWithValue("@Id", category.Id);
+        command.Parameters.AddWithValue("@Title", category.Title);
+        command.Parameters.AddWithValue("@Icon", category.Icon);
+        await command.ExecuteNonQueryAsync().ConfigureAwait(false);
     }
 }

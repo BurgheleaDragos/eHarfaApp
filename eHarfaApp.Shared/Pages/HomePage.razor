@@ -17,12 +17,12 @@
             <MudTabs
                 Outlined="false"
                 ApplyEffectsToContainer="true"
-                Class="mt-8"
+                Class="mt-2"
                 TabPanelsClass="py-0"
                 Style="height:75vh;"
                 Border="false"
                 Centered="true"
-                MinimumTabWidth="30px"
+                MinimumTabWidth="160px"
                 @bind-ActivePanelIndex="SelectedCategory"
                 Position="Position.Bottom"
             >
@@ -33,7 +33,7 @@
                             <MudList 
                                 T="string" 
                                 SelectedValueChanged="SelectSong" 
-                                Class="align-start"
+                                Class="align-start full-w2idth"
                                 Padding="true"
                                 Color="Color.Info">
                                 @for (var i = 0; i < FilteredSongs.Count(); i++)

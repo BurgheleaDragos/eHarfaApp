@@ -9,35 +9,34 @@ namespace eHarfaApp.Shared.Pages;
 public partial class SongPage: ComponentBase
 {
     [Inject]
-    private ISnackbar Snackbar { get; set; }
+    private ISnackbar Snackbar { get; set; } = null!;
 
     [Inject]
-    private ISongService SongService { get; set; }
+    private ISongService SongService { get; set; } = null!;
+
+    [Inject]
+    private IPdfExportService PdfExportService { get; set; } = null!;
 
     [Parameter]
-    public string Id { get; set; }
+    public string Id { get; set; } = string.Empty;
 
     private Song? Song { get; set; }
+    private MarkupString FormattedContent =>
+        new(FormatSongContent(Song?.Content));
     
-    protected override async Task OnInitializedAsync()
+    protected override async Task OnParametersSetAsync()
     {
         Song = await GetSongByIdAsync(Id);
-        if (Song != null)
-        {
-            Song.Content = Song?.Content?.Replace("\\n", "<br />");
-        }
-
-        await base.OnInitializedAsync();
     }
 
     private async Task<Song?> GetSongByIdAsync(string id)
     {
         try
         {
-            return await SongService.GetSongByIdAsync(id);
+            return await SongService.GetSongByIdFromDatabaseAsync(id);
         }
         catch(OperationCanceledException) { }
-        catch (Exception ex)
+        catch (Exception)
         {
             return null;
         }
@@ -51,15 +50,43 @@ public partial class SongPage: ComponentBase
         return Task.CompletedTask;
     }
 
-    private Task ExportPDF(MouseEventArgs arg)
+    private async Task ExportPDF(MouseEventArgs arg)
     {
-        Snackbar.Add("Exported to PDF", Severity.Info);
-        return Task.CompletedTask;
+        if (Song == null)
+        {
+            Snackbar.Add("Cântarea nu a putut fi exportată.", Severity.Error);
+            return;
+        }
+
+        try
+        {
+            await PdfExportService.ExportSongAsync(Song);
+            Snackbar.Add("PDF-ul a fost generat.", Severity.Success);
+        }
+        catch (Exception ex)
+        {
+            Snackbar.Add($"Exportul PDF a eșuat: {ex.Message}", Severity.Error);
+        }
     }
 
     private Task ShareSong(MouseEventArgs arg)
     {
         Snackbar.Add("Share Song", Severity.Info);
         return Task.CompletedTask;
+    }
+
+    private static string FormatSongContent(string? content)
+    {
+        if (string.IsNullOrWhiteSpace(content))
+        {
+            return string.Empty;
+        }
+
+        return content
+            .Replace("\\r\\n", "\n")
+            .Replace("\\n", "\n")
+            .Replace("\r\n", "\n")
+            .Replace("\r", "\n")
+            .Replace("\n", "<br />");
     }
 }

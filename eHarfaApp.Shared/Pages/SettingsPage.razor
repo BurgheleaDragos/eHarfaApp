@@ -19,9 +19,8 @@
                     FullWidth="true"
                     Typo="Typo.body1"
                     Variant="Variant.Text"
-                    @bind-Value="@_settings.FontSize">
-                    @_settings?.FontSize
-                </MudNumericField>
+                    Value="@_settings.FontSize"
+                    ValueChanged="OnFontSizeChanged" />
             </MudItem>
 
             <MudItem Class="d-flex flex-1 justify-space-between gap-2" xs="10">
@@ -31,10 +30,11 @@
                 <MudSelect
                     T="string"
                     FullWidth="true"
-                    bind-Value="@_settings?.FontFamily">
+                    Value="@_settings.FontFamily"
+                    ValueChanged="OnFontFamilyChanged">
                     @foreach (var family in _fontFamilies)
                     {
-                        <MudSelectItem Value="family">@family</MudSelectItem>
+                        <MudSelectItem Value="@family">@family</MudSelectItem>
                     }
                 </MudSelect>
             </MudItem>
