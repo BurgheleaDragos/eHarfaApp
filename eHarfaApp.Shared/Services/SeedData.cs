@@ -179,6 +179,6 @@ internal static class SeedData
 
     public static List<string> CreateFontFamilies()
     {
-        return ["INTER", "Arial"];
+        return ["INTER", "Arial", "Lora", "Crimson Text", "Libre Baskerville"];
     }
 }

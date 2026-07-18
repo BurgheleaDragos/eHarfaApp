@@ -1,13 +1,12 @@
-﻿@inherits LayoutComponentBase
+@inherits LayoutComponentBase
 
-@* Required *@
-<MudThemeProvider @bind-IsDarkMode="@_isDarkMode" @ref="_mudThemeProvider"/>
+<style>
+    html { font-size: @(_settings?.FontSize ?? 20)px; }
+</style>
+
+<MudThemeProvider Theme="_theme" @bind-IsDarkMode="@_isDarkMode" @ref="_mudThemeProvider"/>
 <MudPopoverProvider />
-
-@* Needed for dialogs *@
 <MudDialogProvider />
-
-@* Needed for snackbars *@
 <MudSnackbarProvider />
 
 <section class="page">
@@ -29,56 +28,11 @@
             <NavMenu/>
         </MudDrawer>
         <CascadingValue Name="DarkMode" Value="@_isDarkMode">
-            <CascadingValue Name="DarkModeChanged" Value="@OnSystemDarkModeChanged">
+            <CascadingValue Name="DarkModeChanged" Value="@OnDarkModeChangedFromSettings">
                 <MudMainContent Class="main pt-safe-area-inset-top">
-                    @Body 
+                    @Body
                 </MudMainContent>
             </CascadingValue>
         </CascadingValue>
     </MudLayout>
 </section>
-@* <div id="blazor-error-ui" data-nosnippet> *@
-@*     An unhandled error has occurred. *@
-@*     <a href="." class="reload">Reload</a> *@
-@*     <span class="dismiss">🗙</span> *@
-@* </div> *@
-
-@code {
-    bool _drawerOpen = true;
-    private bool _disableBackBtn = false;
-    private MudThemeProvider _mudThemeProvider;
-
-    private bool _isDarkMode;
-
-    void DrawerToggle()
-    {
-        _drawerOpen = !_drawerOpen;
-    }
-
-    protected override async Task OnAfterRenderAsync(bool firstRender)
-    {
-        if (firstRender)
-        {
-            await _mudThemeProvider.WatchSystemDarkModeAsync(OnSystemDarkModeChanged);
-            StateHasChanged();
-        }
-    }
-
-    private Task OnSystemDarkModeChanged(bool newValue)
-    {
-        _isDarkMode = newValue;
-        StateHasChanged();
-        return Task.CompletedTask;
-    }
-    private EventCallback<bool> popupVisibleChanged;
-    private EventCallback<bool> PopupVisibleChanged
-    {
-        get 
-        {
-            if (popupVisibleChanged.Equals(EventCallback<bool>.Empty))
-                popupVisibleChanged= EventCallback.Factory.Create<bool>(this, s => _isDarkMode= s);
-            return popupVisibleChanged;
-        }
-    }
-
-}

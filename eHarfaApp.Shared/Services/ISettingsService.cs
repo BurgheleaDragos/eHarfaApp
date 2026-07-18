@@ -4,6 +4,8 @@ namespace eHarfaApp.Shared.Services;
 
 public interface ISettingsService
 {
+    event Action<Settings>? SettingsChanged;
+
     Task<Settings> ReadSettingsAsync();
     Task SaveSettingsAsync(Settings settings);
     Settings GetDefaultSettings();

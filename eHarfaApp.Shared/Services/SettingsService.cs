@@ -5,6 +5,8 @@ namespace eHarfaApp.Shared.Services;
 
 public class SettingsService(IConfiguration configuration, SqliteDatabase sqliteDatabase) : ISettingsService
 {
+    public event Action<Settings>? SettingsChanged;
+
     private Settings? _settings = null;
 
     public async Task<Settings> ReadSettingsAsync()
@@ -86,9 +88,10 @@ public class SettingsService(IConfiguration configuration, SqliteDatabase sqlite
         await command.ExecuteNonQueryAsync().ConfigureAwait(false);
     }
 
-    public Task UpdateSettingsInDatabaseAsync(Settings settings)
+    public async Task UpdateSettingsInDatabaseAsync(Settings settings)
     {
-        return SaveSettingsToDatabaseAsync(settings);
+        await SaveSettingsToDatabaseAsync(settings);
+        SettingsChanged?.Invoke(settings);
     }
 
     public async Task<List<string>> GetFontFamiliesFromDatabaseAsync()

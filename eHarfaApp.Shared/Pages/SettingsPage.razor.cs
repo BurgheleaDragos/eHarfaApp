@@ -24,7 +24,6 @@ public partial class SettingsPage: ComponentBase
     private bool _nightMode;
     private List<string> _fontFamilies = [];
 
-    [Parameter]
     [CascadingParameter(Name = "DarkMode")]
     public bool NightMode
     {
@@ -34,17 +33,25 @@ public partial class SettingsPage: ComponentBase
             if (_nightMode == value) return;
             _nightMode = value;
             IsDarkModeChanged.InvokeAsync(value);
+            _ = PersistNightModeAsync(value);
         }
     }
 
     [CascadingParameter(Name = "DarkModeChanged")]
-    public EventCallback<bool> IsDarkModeChanged { get; set; }   
+    public EventCallback<bool> IsDarkModeChanged { get; set; }
+
+    private async Task PersistNightModeAsync(bool isDark)
+    {
+        _settings.ApplicationColor = isDark ? ApplicationColor.Dark : ApplicationColor.Light;
+        await SaveSettingsAsync().ConfigureAwait(false);
+    }
     
     protected override async Task OnInitializedAsync()
     {
         await base.OnInitializedAsync();
         _settings = await GetSettingsAsync().ConfigureAwait(false);
         _fontFamilies = await GetFontFamiliesAsync().ConfigureAwait(false);
+        _nightMode = _settings.ApplicationColor == ApplicationColor.Dark;
     }
 
     private async Task<List<string>> GetFontFamiliesAsync()

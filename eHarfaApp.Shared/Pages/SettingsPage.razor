@@ -34,7 +34,7 @@
                     ValueChanged="OnFontFamilyChanged">
                     @foreach (var family in _fontFamilies)
                     {
-                        <MudSelectItem Value="@family">@family</MudSelectItem>
+                        <MudSelectItem Value="@family" Style="@($"font-family: '{family}', sans-serif;")">@family</MudSelectItem>
                     }
                 </MudSelect>
             </MudItem>
@@ -65,18 +65,18 @@
                 </MudToggleGroup>
             </MudItem>
             
-            <MudItem Class="d-flex flex-1 justify-space-between d-block-flex gap-2" xs="10">
-                <MudContainer Class="d-inline-flex px-0">
-                    <MudText Class="mud-width-full" Typo="Typo.body1">
-                        Sincronizare cantari:
-                    </MudText>
+            <MudItem Class="d-flex flex-1 justify-space-between gap-2" xs="10">
+                <MudText Class="mud-width-full" Typo="Typo.body1">
+                    Sincronizare cantari:
+                </MudText>
+                <MudStack Class="mud-width-full">
                     <MudButton Color="Color.Info" Variant="Variant.Filled" OnClick="SyncData">
                         Start
                     </MudButton>
-                </MudContainer>
-                <MudContainer Class="d-inline-flex px-0 ml-2">
-                    Data ultima sincronizare: <b>@_settings?.LastSynchronized.ToString(CultureInfo.CurrentCulture)</b>
-                </MudContainer>
+                    <MudText Typo="Typo.body2" Style="word-break: break-word;">
+                        Data ultima sincronizare: <b>@_settings?.LastSynchronized.ToString(CultureInfo.CurrentCulture)</b>
+                    </MudText>
+                </MudStack>
             </MudItem>
         </MudGrid>
 </section>

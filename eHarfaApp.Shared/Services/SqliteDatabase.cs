@@ -139,19 +139,16 @@ public class SqliteDatabase(IConfiguration configuration)
             await insertSettings.ExecuteNonQueryAsync().ConfigureAwait(false);
         }
 
-        if (await TableHasRowsAsync(connection, "FontFamilies").ConfigureAwait(false) == false)
+        foreach (var fontFamily in SeedData.CreateFontFamilies())
         {
-            foreach (var fontFamily in SeedData.CreateFontFamilies())
-            {
-                await using var insertFont = connection.CreateCommand();
-                insertFont.CommandText =
-                    """
-                    INSERT INTO FontFamilies (Name)
-                    VALUES (@Name);
-                    """;
-                insertFont.Parameters.AddWithValue("@Name", fontFamily);
-                await insertFont.ExecuteNonQueryAsync().ConfigureAwait(false);
-            }
+            await using var insertFont = connection.CreateCommand();
+            insertFont.CommandText =
+                """
+                INSERT OR IGNORE INTO FontFamilies (Name)
+                VALUES (@Name);
+                """;
+            insertFont.Parameters.AddWithValue("@Name", fontFamily);
+            await insertFont.ExecuteNonQueryAsync().ConfigureAwait(false);
         }
     }
 
