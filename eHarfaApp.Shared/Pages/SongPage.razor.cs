@@ -92,10 +92,33 @@ public partial class SongPage : ComponentBase, IAsyncDisposable
         }
     }
 
-    private Task ShareSong(MouseEventArgs arg)
+    private async Task ShareSong(MouseEventArgs arg)
     {
-        Snackbar.Add("Share Song", Severity.Info);
-        return Task.CompletedTask;
+        if (Song == null)
+        {
+            Snackbar.Add("Cântarea nu a putut fi distribuită.", Severity.Error);
+            return;
+        }
+
+        try
+        {
+            var result = await PdfExportService.ShareSongAsync(Song);
+            switch (result)
+            {
+                case ShareResult.Shared:
+                    Snackbar.Add("Cântarea a fost distribuită.", Severity.Success);
+                    break;
+                case ShareResult.Downloaded:
+                    Snackbar.Add("Distribuirea directă nu este disponibilă în acest browser. PDF-ul a fost descărcat.", Severity.Info);
+                    break;
+                case ShareResult.Cancelled:
+                    break;
+            }
+        }
+        catch (Exception ex)
+        {
+            Snackbar.Add($"Distribuirea a eșuat: {ex.Message}", Severity.Error);
+        }
     }
 
     public ValueTask DisposeAsync()

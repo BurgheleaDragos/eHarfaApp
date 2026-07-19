@@ -15,6 +15,22 @@ public class WebPdfExportService(IJSRuntime jsRuntime) : IPdfExportService
         await jsRuntime.InvokeVoidAsync("eHarfa.downloadPdfFromBase64", fileName, base64);
     }
 
+    public async Task<ShareResult> ShareSongAsync(Song song)
+    {
+        var pdfBytes = SongPdfDocument.Generate(CreatePrintableSong(song));
+        var fileName = $"{ToSafeFileName(song.Title)}.pdf";
+        var base64 = Convert.ToBase64String(pdfBytes);
+
+        var result = await jsRuntime.InvokeAsync<string>("eHarfa.shareSongPdf", fileName, base64, song.Title);
+
+        return result switch
+        {
+            "shared" => ShareResult.Shared,
+            "cancelled" => ShareResult.Cancelled,
+            _ => ShareResult.Downloaded
+        };
+    }
+
     private static Song CreatePrintableSong(Song song)
     {
         return new Song

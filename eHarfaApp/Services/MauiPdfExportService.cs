@@ -8,6 +8,23 @@ public class MauiPdfExportService : IPdfExportService
 {
     public async Task ExportSongAsync(Song song)
     {
+        var filePath = await WritePdfToCacheAsync(song);
+
+        await Share.Default.RequestAsync(new ShareFileRequest
+        {
+            Title = song.Title,
+            File = new ShareFile(filePath)
+        });
+    }
+
+    public async Task<ShareResult> ShareSongAsync(Song song)
+    {
+        await ExportSongAsync(song);
+        return ShareResult.Shared;
+    }
+
+    private static async Task<string> WritePdfToCacheAsync(Song song)
+    {
         var printableSong = new Song
         {
             Id = song.Id,
@@ -23,12 +40,7 @@ public class MauiPdfExportService : IPdfExportService
         var filePath = Path.Combine(FileSystem.Current.CacheDirectory, fileName);
 
         await File.WriteAllBytesAsync(filePath, pdfBytes);
-
-        await Share.Default.RequestAsync(new ShareFileRequest
-        {
-            Title = song.Title,
-            File = new ShareFile(filePath)
-        });
+        return filePath;
     }
 
     private static string NormalizeContent(string? content)
