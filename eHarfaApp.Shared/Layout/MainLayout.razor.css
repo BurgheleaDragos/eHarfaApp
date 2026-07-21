@@ -37,6 +37,10 @@
     padding-top: env(safe-area-inset-top);
 }
 
+::deep .mt-safe-area-inset-top{
+    margin-top: env(safe-area-inset-top);
+}
+
 ::deep .z-index-9999{
     z-index: 9999;
 }

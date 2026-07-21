@@ -7,7 +7,7 @@ public class SongService(SqliteDatabase sqliteDatabase) : ISongService
 {
     public Task<List<Song>> GetSongsAsync()
     {
-        return Task.FromResult(SeedData.CreateSongs());
+        return Task.FromResult(SeedData.ImportInitialSongs());
     }
 
     public Task<List<SongCategory>> GetCategoriesAsync()
@@ -17,10 +17,11 @@ public class SongService(SqliteDatabase sqliteDatabase) : ISongService
 
     public async Task<Song> GetSongByIdAsync(string id)
     {
-        return await Task.FromResult(SeedData.CreateSongById(id));
+        var songs = await Task.FromResult(SeedData.ImportInitialSongs());
+        return songs.First(song => song.Id == id);
     }
 
-    public async Task<List<Song>> GetSongsFromDatabaseAsync()
+    public async Task<List<Song>> GetSongSummariesFromDatabaseAsync(string categoryId, string? searchTerm)
     {
         await sqliteDatabase.EnsureCreatedAsync().ConfigureAwait(false);
 
@@ -32,29 +33,44 @@ public class SongService(SqliteDatabase sqliteDatabase) : ISongService
         var songs = new List<Song>();
 
         await using var command = connection.CreateCommand();
-        command.CommandText =
-            """
-            SELECT Id, Title, Scale, Content, CategoryId
-            FROM Songs
-            ORDER BY CAST(Id AS INTEGER), Id;
-            """;
+        if (string.IsNullOrWhiteSpace(searchTerm))
+        {
+            command.CommandText =
+                """
+                SELECT Id, Title, Scale, CategoryId
+                FROM Songs
+                WHERE CategoryId = @CategoryId
+                ORDER BY CAST(Id AS INTEGER), Id;
+                """;
+            command.Parameters.AddWithValue("@CategoryId", categoryId);
+        }
+        else
+        {
+            command.CommandText =
+                """
+                SELECT Id, Title, Scale, CategoryId
+                FROM Songs
+                WHERE CategoryId = @CategoryId AND (LOWER(Title) LIKE @Search OR LOWER(Content) LIKE @Search)
+                ORDER BY CAST(Id AS INTEGER), Id;
+                """;
+            command.Parameters.AddWithValue("@CategoryId", categoryId);
+            command.Parameters.AddWithValue("@Search", $"%{searchTerm.ToLowerInvariant()}%");
+        }
+
+        categoryLookup.TryGetValue(categoryId, out var category);
+        category ??= new SongCategory { Id = categoryId, Title = string.Empty, Icon = Icons.Material.Filled.Category };
 
         await using var reader = await command.ExecuteReaderAsync().ConfigureAwait(false);
         while (await reader.ReadAsync().ConfigureAwait(false))
         {
-            var categoryId = reader.GetString(reader.GetOrdinal("CategoryId"));
-            categoryLookup.TryGetValue(categoryId, out var category);
-
             songs.Add(new Song
             {
                 Id = reader.GetString(reader.GetOrdinal("Id")),
                 Title = reader.GetString(reader.GetOrdinal("Title")),
                 Scale = reader.GetString(reader.GetOrdinal("Scale")),
-                Content = reader.IsDBNull(reader.GetOrdinal("Content"))
-                    ? null
-                    : reader.GetString(reader.GetOrdinal("Content")),
+                Content = null,
                 CategoryId = categoryId,
-                Category = category ?? new SongCategory { Id = categoryId, Title = string.Empty, Icon = Icons.Material.Filled.Category }
+                Category = category
             });
         }
 

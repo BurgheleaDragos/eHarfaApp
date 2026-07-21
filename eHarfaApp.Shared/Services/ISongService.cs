@@ -8,7 +8,7 @@ public interface ISongService
     Task<List<Song>> GetSongsAsync();
     Task<List<SongCategory>> GetCategoriesAsync();
     Task<Song> GetSongByIdAsync(string id);
-    Task<List<Song>> GetSongsFromDatabaseAsync();
+    Task<List<Song>> GetSongSummariesFromDatabaseAsync(string categoryId, string? searchTerm);
     Task<List<SongCategory>> GetCategoriesFromDatabaseAsync();
     Task<Song?> GetSongByIdFromDatabaseAsync(string id);
     Task SaveSongsToDatabaseAsync(IEnumerable<Song> songs);

@@ -30,20 +30,19 @@
                 {
                     <MudTabPanel ID="@category.Id" Icon="@category.Icon" >
                         <MudPaper Style="max-height: calc(100vh - 300px);" Class="d-flex align-start overflow-x-auto">
-                            <MudList 
-                                T="string" 
-                                SelectedValueChanged="SelectSong" 
+                            <MudList
+                                T="string"
+                                SelectedValueChanged="SelectSong"
                                 Class="align-start full-w2idth"
                                 Padding="true"
                                 Color="Color.Info">
-                                @for (var i = 0; i < FilteredSongs.Count(); i++)
-                                {
+                                <Virtualize Items="GetSongsForPanel(category.Id)" Context="song" OverscanCount="20">
                                     <MudListItem
-                                        T="string" 
-                                        Text=@($"{i}. {FilteredSongs[i].Title}") 
-                                        Value="@FilteredSongs[i].Id" >
-                                    </MudListItem>     
-                                }
+                                        T="string"
+                                        Text="@GetSongDisplayText(category.Id, song)"
+                                        Value="@song.Id">
+                                    </MudListItem>
+                                </Virtualize>
                             </MudList>
                         </MudPaper>
                     </MudTabPanel>

@@ -113,12 +113,14 @@ public class SqliteDatabase(IConfiguration configuration)
 
         if (await TableHasRowsAsync(connection, "Songs").ConfigureAwait(false) == false)
         {
-            foreach (var song in SeedData.CreateSongs())
+            await using var transaction = connection.BeginTransaction();
+
+            foreach (var song in SeedData.ImportInitialSongs())
             {
-                await InsertOrReplaceSongAsync(connection, song).ConfigureAwait(false);
+                await InsertOrReplaceSongAsync(connection, song, transaction).ConfigureAwait(false);
             }
 
-            await InsertOrReplaceSongAsync(connection, SeedData.CreateSongById("100")).ConfigureAwait(false);
+            await transaction.CommitAsync().ConfigureAwait(false);
         }
 
         if (await TableHasRowsAsync(connection, "Settings").ConfigureAwait(false) == false)
@@ -168,9 +170,11 @@ public class SqliteDatabase(IConfiguration configuration)
         return result is long count && count == 1;
     }
 
-    private static async Task InsertOrReplaceSongAsync(SqliteConnection connection, Song song)
+    private static async Task InsertOrReplaceSongAsync(
+        SqliteConnection connection, Song song, SqliteTransaction? transaction = null)
     {
         await using var command = connection.CreateCommand();
+        command.Transaction = transaction;
         command.CommandText =
             """
             INSERT OR REPLACE INTO Songs (Id, Title, Scale, Content, CategoryId)
