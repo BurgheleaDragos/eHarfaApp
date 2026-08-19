@@ -22,6 +22,7 @@ public partial class SettingsPage: ComponentBase
 
     private Settings _settings = null!;
     private bool _nightMode;
+    private bool _isSynchronizing;
     private List<string> _fontFamilies = [];
 
     [CascadingParameter(Name = "DarkMode")]
@@ -83,10 +84,13 @@ public partial class SettingsPage: ComponentBase
         return SettingsService.GetDefaultSettings();
     }
 
-    private async Task SaveSettingsAsync()
+    private async Task SaveSettingsAsync(bool showConfirmation = true)
     {
         await SettingsService.UpdateSettingsInDatabaseAsync(_settings).ConfigureAwait(false);
-        Snackbar.Add("Setările au fost salvate.", Severity.Success);
+        if (showConfirmation)
+        {
+            Snackbar.Add("Setările au fost salvate.", Severity.Success);
+        }
     }
 
     private async Task OnFontSizeChanged(int value)
@@ -108,24 +112,45 @@ public partial class SettingsPage: ComponentBase
 
     private async Task SyncData(MouseEventArgs arg)
     {
-        var categories = await ApiService.GetCategoriesAsync().ConfigureAwait(false);
-        if (categories.Count == 0)
+        if (_isSynchronizing)
         {
-            categories = await SongService.GetCategoriesAsync().ConfigureAwait(false);
+            return;
         }
 
-        await SongService.SaveCategoriesToDatabaseAsync(categories).ConfigureAwait(false);
+        _isSynchronizing = true;
+        await InvokeAsync(StateHasChanged);
+        await Task.Yield();
 
-        var songs = await ApiService.GetSongsAsync().ConfigureAwait(false);
-        if (songs.Count == 0)
+        try
         {
-            songs = await SongService.GetSongsAsync().ConfigureAwait(false);
+            var categories = await ApiService.GetCategoriesAsync();
+            if (categories.Count == 0)
+            {
+                categories = await SongService.GetCategoriesAsync();
+            }
+
+            await SongService.SaveCategoriesToDatabaseAsync(categories);
+
+            var songs = await ApiService.GetSongsAsync();
+            if (songs.Count == 0)
+            {
+                songs = await SongService.GetSongsAsync();
+            }
+
+            await SongService.SaveSongsToDatabaseAsync(songs);
+
+            _settings.LastSynchronized = DateTime.Now;
+            await SaveSettingsAsync(showConfirmation: false);
+            Snackbar.Add("Datele au fost sincronizate din baza de date.", Severity.Success);
         }
-
-        await SongService.SaveSongsToDatabaseAsync(songs).ConfigureAwait(false);
-
-        _settings.LastSynchronized = DateTime.Now;
-        await SaveSettingsAsync().ConfigureAwait(false);
-        Snackbar.Add("Datele au fost sincronizate din baza de date.", Severity.Success);
+        catch (Exception ex)
+        {
+            Snackbar.Add($"Sincronizarea a eșuat: {ex.Message}", Severity.Error);
+        }
+        finally
+        {
+            _isSynchronizing = false;
+            await InvokeAsync(StateHasChanged);
+        }
     }
 }

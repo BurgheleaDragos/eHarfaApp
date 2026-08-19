@@ -1,0 +1,15 @@
+::deep .settings-page {
+    max-width: 38rem;
+    padding-top: calc(var(--top-bar-height) + 8px);
+    padding-bottom: 24px;
+}
+
+::deep .settings-label,
+::deep .settings-control {
+    font-family: Inter, sans-serif;
+    min-width: 0;
+}
+
+::deep .settings-label {
+    white-space: nowrap;
+}

@@ -9,6 +9,9 @@ namespace eHarfaApp.Shared.Pages;
 
 public partial class SongPage : ComponentBase, IAsyncDisposable
 {
+    private const double MinFontSize = 0.7;
+    private const double MaxFontSize = 2.5;
+
     [Inject]
     private ISnackbar Snackbar { get; set; } = null!;
 
@@ -41,15 +44,27 @@ public partial class SongPage : ComponentBase, IAsyncDisposable
         if (firstRender)
         {
             _dotNetRef = DotNetObjectReference.Create(this);
-            await JS.InvokeVoidAsync("eHarfa.initZoom", "song-content", _dotNetRef);
+            await JS.InvokeVoidAsync(
+                "eHarfa.initSongGestures",
+                "song-content",
+                GetSongTextForClipboard(),
+                _dotNetRef);
         }
     }
 
     [JSInvokable]
     public void OnFontSizeChanged(double fontSize)
     {
-        _fontSize = fontSize;
+        _fontSize = Math.Clamp(fontSize, MinFontSize, MaxFontSize);
         StateHasChanged();
+    }
+
+    [JSInvokable]
+    public void OnSongCopied(bool copied)
+    {
+        Snackbar.Add(
+            copied ? "Cântarea a fost copiată în clipboard." : "Copierea nu este disponibilă pe acest dispozitiv.",
+            copied ? Severity.Success : Severity.Error);
     }
 
     private async Task<Song?> GetSongByIdAsync(string id)
@@ -121,10 +136,18 @@ public partial class SongPage : ComponentBase, IAsyncDisposable
         }
     }
 
-    public ValueTask DisposeAsync()
+    public async ValueTask DisposeAsync()
     {
+        try
+        {
+            await JS.InvokeVoidAsync("eHarfa.disposeSongGestures", "song-content");
+        }
+        catch (JSDisconnectedException)
+        {
+            // The WebView has already been disposed.
+        }
+
         _dotNetRef?.Dispose();
-        return ValueTask.CompletedTask;
     }
 
     private static string FormatSongContent(string? content)
@@ -134,11 +157,23 @@ public partial class SongPage : ComponentBase, IAsyncDisposable
             return string.Empty;
         }
 
-        return content
+        return NormalizeSongContent(content)
+            .Replace("\n", "<br />");
+    }
+
+    private static string NormalizeSongContent(string? content)
+    {
+        return (content ?? string.Empty)
             .Replace("\\r\\n", "\n")
             .Replace("\\n", "\n")
             .Replace("\r\n", "\n")
-            .Replace("\r", "\n")
-            .Replace("\n", "<br />");
+            .Replace("\r", "\n");
+    }
+
+    private string GetSongTextForClipboard()
+    {
+        return Song is null
+            ? string.Empty
+            : $"{Song.Title}\n\n{NormalizeSongContent(Song.Content)}";
     }
 }

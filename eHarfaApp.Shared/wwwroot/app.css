@@ -22,6 +22,25 @@
     --mudblazor-breakpoint-xl: 2560px;
 }
 
+/* MudSnackbarProvider is rendered outside component CSS-isolation scopes.
+   Anchor its container globally to the viewport, below the app bar, so it is
+   centered and never crosses the header on mobile screens. */
+#mud-snackbar-container.mud-snackbar-location-top-left,
+#mud-snackbar-container.mud-snackbar-location-top-center,
+#mud-snackbar-container.mud-snackbar-location-top-right {
+    top: calc(var(--safe-area-inset-top) + var(--top-bar-height) + 12px) !important;
+    right: auto !important;
+    left: 50vw !important;
+    width: min(calc(100vw - 32px), 500px) !important;
+    transform: translateX(-50%) !important;
+}
+
+#mud-snackbar-container .mud-snackbar {
+    box-sizing: border-box;
+    width: 100%;
+    max-width: none;
+}
+
 html, body {
     font-family: 'Helvetica Neue', Helvetica, Arial, sans-serif;
 }

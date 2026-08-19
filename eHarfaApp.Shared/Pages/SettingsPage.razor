@@ -6,9 +6,9 @@
     <PageTitle>Setari</PageTitle>
     <SectionContent SectionName="page-title">Setari</SectionContent>
 
-        <MudGrid Class="d-flex flex-1 flex-column gap-2 ma-2" >
-            <MudItem Class="d-flex flex-1 justify-space-between gap-2" xs="10">
-                <MudText Class="mud-width-full" Typo="Typo.body1">
+        <MudStack Spacing="3" Class="settings-page ma-4">
+            <MudStack Spacing="1">
+                <MudText Class="settings-label" Typo="Typo.body1">
                     Dimensiune font:
                 </MudText>
                 <MudNumericField
@@ -21,10 +21,10 @@
                     Variant="Variant.Text"
                     Value="@_settings.FontSize"
                     ValueChanged="OnFontSizeChanged" />
-            </MudItem>
+            </MudStack>
 
-            <MudItem Class="d-flex flex-1 justify-space-between gap-2" xs="10">
-                <MudText Class="mud-width-full" Typo="Typo.body1">
+            <MudStack Spacing="1">
+                <MudText Class="settings-label" Typo="Typo.body1">
                     Familie font:
                 </MudText>
                 <MudSelect
@@ -37,18 +37,18 @@
                         <MudSelectItem Value="@family" Style="@($"font-family: '{family}', sans-serif;")">@family</MudSelectItem>
                     }
                 </MudSelect>
-            </MudItem>
+            </MudStack>
 
-            <MudItem Class="d-flex flex-1 justify-space-between gap-2" xs="10">
-                <MudText Class="mud-width-full" Typo="Typo.body1">
+            <MudStack Spacing="1">
+                <MudText Class="settings-label" Typo="Typo.body1">
                     Contact:
                 </MudText>
-                <MudContainer Class="mud-width-full">@_settings?.Contact</MudContainer>
-            </MudItem>
+                <MudText Typo="Typo.body2" Style="word-break: break-word;">@_settings?.Contact</MudText>
+            </MudStack>
 
-            <MudItem Class="d-flex flex-1 justify-space-between d-inline gap-2" xs="10">
+            <MudStack Spacing="1">
                 <MudText 
-                    Class="mud-width-full" 
+                    Class="settings-label"
                     Typo="Typo.body1">
                     Mod noapte
                 </MudText>
@@ -59,24 +59,24 @@
                     FixedContent="false"
                     CheckMark="false"
                     Color="Color.Primary"
-                    Class="mud-width-full">
+                    Class="settings-control">
                     <MudToggleItem Value="@true" Text="Noapte" />
                     <MudToggleItem Value="@false" Text="Zi" />
                 </MudToggleGroup>
-            </MudItem>
+            </MudStack>
             
-            <MudItem Class="d-flex flex-1 justify-space-between gap-2" xs="10">
-                <MudText Class="mud-width-full" Typo="Typo.body1">
+            <MudStack Spacing="1">
+                <MudText Class="settings-label" Typo="Typo.body1">
                     Sincronizare cantari:
                 </MudText>
-                <MudStack Class="mud-width-full">
-                    <MudButton Color="Color.Info" Variant="Variant.Filled" OnClick="SyncData">
-                        Start
+                <MudStack Class="settings-control">
+                    <MudButton Color="Color.Info" Variant="Variant.Filled" OnClick="SyncData" Disabled="@_isSynchronizing">
+                        @(_isSynchronizing ? "Se sincronizează..." : "Start")
                     </MudButton>
                     <MudText Typo="Typo.body2" Style="word-break: break-word;">
                         Data ultima sincronizare: <b>@_settings?.LastSynchronized.ToString(CultureInfo.CurrentCulture)</b>
                     </MudText>
                 </MudStack>
-            </MudItem>
-        </MudGrid>
+            </MudStack>
+        </MudStack>
 </section>

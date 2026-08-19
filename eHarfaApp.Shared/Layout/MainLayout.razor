@@ -12,7 +12,11 @@
 <section class="page">
     <MudLayout Class="main">
         <MudAppBar Elevation="1" Class="pt-safe-area-inset-top z-index-9999">
-            <MudIcon Icon="@Icons.Material.Outlined.ArrowBackIosNew" Disabled="_disableBackBtn"></MudIcon>
+            <MudIconButton
+                Icon="@Icons.Material.Outlined.ArrowBackIosNew"
+                Disabled="_disableBackBtn"
+                aria-label="Înapoi"
+                OnClick="NavigateBackAsync" />
             <MudSpacer/>
             <MudText Class="title">
                 <SectionOutlet SectionName="page-title"/>
