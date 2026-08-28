@@ -55,7 +55,9 @@ public class WebPdfExportService(IJSRuntime jsRuntime) : IPdfExportService
 
     private static string ToSafeFileName(string title)
     {
-        var sanitized = Regex.Replace(title, "[^a-zA-Z0-9 _.-]", "");
+        // Windows and modern browsers accept Unicode file names.  Only remove
+        // characters that are actually invalid in a file name.
+        var sanitized = Regex.Replace(title, @"[\x00-\x1F<>:""/\\|?*]", "");
         sanitized = Regex.Replace(sanitized, "\\s+", " ").Trim();
         return string.IsNullOrWhiteSpace(sanitized) ? "song-export" : sanitized;
     }

@@ -1,3 +1,13 @@
 ::deep .full-width{
     width: 100%;
 }
+
+::deep .category-navigation {
+    min-height: 48px;
+}
+
+/* The built-in tab arrows only scroll the tab strip.  Category changes use
+   the explicit buttons rendered in .category-navigation instead. */
+::deep .mud-tabs-scroll-button {
+    display: none;
+}

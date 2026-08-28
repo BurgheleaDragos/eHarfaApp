@@ -54,7 +54,8 @@ public class MauiPdfExportService : IPdfExportService
 
     private static string ToSafeFileName(string title)
     {
-        var sanitized = Regex.Replace(title, "[^a-zA-Z0-9 _.-]", "");
+        // Preserve Romanian diacritics; they are valid in Android and Windows file names.
+        var sanitized = Regex.Replace(title, @"[\x00-\x1F<>:""/\\|?*]", "");
         sanitized = Regex.Replace(sanitized, "\\s+", " ").Trim();
         return string.IsNullOrWhiteSpace(sanitized) ? "song-export" : sanitized;
     }

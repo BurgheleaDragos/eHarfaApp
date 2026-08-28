@@ -1,6 +1,7 @@
 using eHarfaApp.Shared.DAL;
 using eHarfaApp.Shared.Services;
 using Microsoft.AspNetCore.Components;
+using Microsoft.JSInterop;
 using MudBlazor;
 
 namespace eHarfaApp.Shared.Layout;
@@ -9,6 +10,9 @@ public partial class MainLayout : LayoutComponentBase, IDisposable
 {
     [Inject]
     private ISettingsService SettingsService { get; set; } = null!;
+
+    [Inject]
+    private IJSRuntime JS { get; set; } = null!;
 
     private bool _drawerOpen = true;
     private bool _disableBackBtn = false;
@@ -35,6 +39,11 @@ public partial class MainLayout : LayoutComponentBase, IDisposable
     private void DrawerToggle()
     {
         _drawerOpen = !_drawerOpen;
+    }
+
+    private async Task NavigateBackAsync()
+    {
+        await JS.InvokeVoidAsync("eHarfa.navigateBack", "/");
     }
 
     protected override async Task OnAfterRenderAsync(bool firstRender)

@@ -4,6 +4,7 @@
              xmlns:local="clr-namespace:eHarfaApp"
              xmlns:shared="clr-namespace:eHarfaApp.Shared;assembly=eHarfaApp.Shared"
              x:Class="eHarfaApp.MainPage"
+             SafeAreaEdges="Container"
              BackgroundColor="{DynamicResource PageBackgroundColor}">
 
     <BlazorWebView x:Name="blazorWebView" HostPage="wwwroot/index.html">

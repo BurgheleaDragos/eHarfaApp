@@ -66,6 +66,22 @@ public partial class HomePage: ComponentBase, IDisposable
         }
     }
 
+    private Task ShowPreviousCategoryAsync()
+    {
+        if (SelectedCategory > 0)
+            SelectedCategory--;
+
+        return Task.CompletedTask;
+    }
+
+    private Task ShowNextCategoryAsync()
+    {
+        if (SelectedCategory < Categories.Count - 1)
+            SelectedCategory++;
+
+        return Task.CompletedTask;
+    }
+
     private async Task GetSongCategoriesAsync()
     {
         try

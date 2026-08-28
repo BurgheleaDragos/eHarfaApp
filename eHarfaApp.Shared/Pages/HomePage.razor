@@ -49,5 +49,16 @@
                 }
             </MudTabs>
         </MudSwipeArea>
+        <MudStack Row="true" Justify="Justify.SpaceBetween" AlignItems="AlignItems.Center" Class="category-navigation px-2">
+            <MudIconButton Icon="@Icons.Material.Outlined.ChevronLeft"
+                           aria-label="Categoria anterioară"
+                           Disabled="@(SelectedCategory == 0)"
+                           OnClick="ShowPreviousCategoryAsync" />
+            <MudSpacer />
+            <MudIconButton Icon="@Icons.Material.Outlined.ChevronRight"
+                           aria-label="Categoria următoare"
+                           Disabled="@(Categories.Count == 0 || SelectedCategory >= Categories.Count - 1)"
+                           OnClick="ShowNextCategoryAsync" />
+        </MudStack>
     </MudContainer>
 </section>
