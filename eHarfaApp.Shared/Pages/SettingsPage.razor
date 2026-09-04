@@ -1,5 +1,4 @@
 ﻿@page "/settings"
-@using System.Globalization
 @using Color = MudBlazor.Color
 
 <section>
@@ -65,18 +64,5 @@
                 </MudToggleGroup>
             </MudStack>
             
-            <MudStack Spacing="1">
-                <MudText Class="settings-label" Typo="Typo.body1">
-                    Sincronizare cantari:
-                </MudText>
-                <MudStack Class="settings-control">
-                    <MudButton Color="Color.Info" Variant="Variant.Filled" OnClick="SyncData" Disabled="@_isSynchronizing">
-                        @(_isSynchronizing ? "Se sincronizează..." : "Start")
-                    </MudButton>
-                    <MudText Typo="Typo.body2" Style="word-break: break-word;">
-                        Data ultima sincronizare: <b>@_settings?.LastSynchronized.ToString(CultureInfo.CurrentCulture)</b>
-                    </MudText>
-                </MudStack>
-            </MudStack>
         </MudStack>
 </section>
