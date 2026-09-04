@@ -82,6 +82,11 @@
     height: calc(100% - var(--top-bar-height));
 }
 
+::deep .back-button,
+::deep .back-button .mud-icon-root {
+    color: var(--mud-palette-white) !important;
+}
+
 @media (max-width: 640.98px) {
 }
 
