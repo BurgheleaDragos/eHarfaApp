@@ -1,7 +1,6 @@
 using eHarfaApp.Shared.DAL;
 using eHarfaApp.Shared.Services;
 using Microsoft.AspNetCore.Components;
-using Microsoft.AspNetCore.Components.Web;
 using MudBlazor;
 
 namespace eHarfaApp.Shared.Pages;
@@ -12,17 +11,10 @@ public partial class SettingsPage: ComponentBase
     private ISettingsService SettingsService { get; set; } = null!;
 
     [Inject]
-    private ISongService SongService { get; set; } = null!;
-
-    [Inject]
-    private IApiService ApiService { get; set; } = null!;
-
-    [Inject]
     private ISnackbar Snackbar { get; set; } = null!;
 
     private Settings _settings = null!;
     private bool _nightMode;
-    private bool _isSynchronizing;
     private List<string> _fontFamilies = [];
 
     [CascadingParameter(Name = "DarkMode")]
@@ -110,47 +102,4 @@ public partial class SettingsPage: ComponentBase
         await SaveSettingsAsync().ConfigureAwait(false);
     }
 
-    private async Task SyncData(MouseEventArgs arg)
-    {
-        if (_isSynchronizing)
-        {
-            return;
-        }
-
-        _isSynchronizing = true;
-        await InvokeAsync(StateHasChanged);
-        await Task.Yield();
-
-        try
-        {
-            var categories = await ApiService.GetCategoriesAsync();
-            if (categories.Count == 0)
-            {
-                categories = await SongService.GetCategoriesAsync();
-            }
-
-            await SongService.SaveCategoriesToDatabaseAsync(categories);
-
-            var songs = await ApiService.GetSongsAsync();
-            if (songs.Count == 0)
-            {
-                songs = await SongService.GetSongsAsync();
-            }
-
-            await SongService.SaveSongsToDatabaseAsync(songs);
-
-            _settings.LastSynchronized = DateTime.Now;
-            await SaveSettingsAsync(showConfirmation: false);
-            Snackbar.Add("Datele au fost sincronizate din baza de date.", Severity.Success);
-        }
-        catch (Exception ex)
-        {
-            Snackbar.Add($"Sincronizarea a eșuat: {ex.Message}", Severity.Error);
-        }
-        finally
-        {
-            _isSynchronizing = false;
-            await InvokeAsync(StateHasChanged);
-        }
-    }
 }
