@@ -13,7 +13,7 @@
             Label="Cautare"
             Adornment="Adornment.End"
             AdornmentIcon="@Icons.Material.Outlined.Search" />
-        <MudSwipeArea OnSwipeEnd="HandleSwipe" Style="width: 100%;">
+        <MudSwipeArea OnSwipeEnd="HandleSwipe" Class="category-tabs">
             <MudTabs
                 Outlined="false"
                 ApplyEffectsToContainer="true"
@@ -48,17 +48,16 @@
                     </MudTabPanel>
                 }
             </MudTabs>
+            <div class="category-navigation" aria-label="Navigare categorii">
+                <MudIconButton Icon="@Icons.Material.Outlined.ChevronLeft"
+                               aria-label="Categoria anterioară"
+                               Disabled="@(SelectedCategory == 0)"
+                               OnClick="ShowPreviousCategoryAsync" />
+                <MudIconButton Icon="@Icons.Material.Outlined.ChevronRight"
+                               aria-label="Categoria următoare"
+                               Disabled="@(Categories.Count == 0 || SelectedCategory >= Categories.Count - 1)"
+                               OnClick="ShowNextCategoryAsync" />
+            </div>
         </MudSwipeArea>
-        <MudStack Row="true" Justify="Justify.SpaceBetween" AlignItems="AlignItems.Center" Class="category-navigation px-2">
-            <MudIconButton Icon="@Icons.Material.Outlined.ChevronLeft"
-                           aria-label="Categoria anterioară"
-                           Disabled="@(SelectedCategory == 0)"
-                           OnClick="ShowPreviousCategoryAsync" />
-            <MudSpacer />
-            <MudIconButton Icon="@Icons.Material.Outlined.ChevronRight"
-                           aria-label="Categoria următoare"
-                           Disabled="@(Categories.Count == 0 || SelectedCategory >= Categories.Count - 1)"
-                           OnClick="ShowNextCategoryAsync" />
-        </MudStack>
     </MudContainer>
 </section>
