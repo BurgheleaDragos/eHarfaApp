@@ -2,12 +2,38 @@
     width: 100%;
 }
 
-::deep .category-navigation {
-    min-height: 48px;
+/* Keep the functional category controls in the same bottom tab bar.  The
+   MudTabs scroll arrows only move the strip, so they cannot be used here. */
+::deep .category-tabs {
+    position: relative;
+    width: 100%;
 }
 
-/* The built-in tab arrows only scroll the tab strip.  Category changes use
-   the explicit buttons rendered in .category-navigation instead. */
-::deep .mud-tabs-scroll-button {
+::deep .category-tabs .mud-tabs-scroll-button {
     display: none;
+}
+
+/* The tab strip itself is narrower than the full bar, reserving a touch-safe
+   area for the two navigation buttons. */
+::deep .category-tabs .mud-tabs-tabbar-content {
+    width: auto;
+    flex: 1 1 auto;
+    margin-inline: 56px;
+}
+
+::deep .category-navigation {
+    position: absolute;
+    right: 0;
+    bottom: 0;
+    left: 0;
+    z-index: 1;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    min-height: 48px;
+    pointer-events: none;
+}
+
+::deep .category-navigation .mud-icon-button {
+    pointer-events: auto;
 }
