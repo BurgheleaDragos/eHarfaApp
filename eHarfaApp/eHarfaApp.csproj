@@ -44,10 +44,16 @@
 
     <ItemGroup>
         <!-- App Icon -->
-        <MauiIcon Include="Resources\AppIcon\appicon.png" Color="#512BD4" />
+        <MauiIcon Include="Resources\AppIcon\appiconsquare.png"
+                  ForegroundFile="Resources\AppIcon\appiconsquare.png"
+                  ForegroundScale="1.0" />
 
         <!-- Splash Screen -->
-        <MauiSplashScreen Include="Resources\AppIcon\appicon.png" BaseSize="128,128"/>
+        <MauiSplashScreen Include="Resources\AppIcon\appicon1.png" Link="splash.png" BaseSize="1024,1024" />
+
+        <!-- Android needs a drawable with the same name used by the generated
+             splash resource.  It uses the same source image as the app icon. -->
+        <AndroidResource Include="Resources\AppIcon\appicon1.png" Link="drawable\splash.png" />
 
         <!-- Custom Fonts -->
         <MauiFont Include="Resources\Fonts\*"/>

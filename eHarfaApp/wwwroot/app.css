@@ -1,5 +1,6 @@
 :root{
     --top-bar-height: 60px;
+    --app-header-color: #512BDF;
     --scrollbar-thickness-android: 4px; /* the thickness of the scrollbar gutter displayed on android only */
 
     --safe-area-inset-top: max(env(safe-area-inset-top), var(--native-window-inset-top, 0px));
@@ -32,7 +33,7 @@
         position: sticky;
         top: 0;
         height: env(safe-area-inset-top);
-        background-color: #f7f7f7;
+        background-color: var(--app-header-color);
         width: 100%;
         z-index: 1;
     }
