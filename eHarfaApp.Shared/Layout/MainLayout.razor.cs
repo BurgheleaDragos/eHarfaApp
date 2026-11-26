@@ -8,6 +8,8 @@ namespace eHarfaApp.Shared.Layout;
 
 public partial class MainLayout : LayoutComponentBase, IDisposable
 {
+    private const string HeaderColor = "#512BDF";
+
     [Inject]
     private ISettingsService SettingsService { get; set; } = null!;
 
@@ -70,6 +72,18 @@ public partial class MainLayout : LayoutComponentBase, IDisposable
         var families = new[] { fontFamily, "sans-serif" };
         return new MudTheme
         {
+            PaletteLight = new PaletteLight
+            {
+                Primary = HeaderColor,
+                AppbarBackground = HeaderColor,
+                AppbarText = "#FFFFFF"
+            },
+            PaletteDark = new PaletteDark
+            {
+                Primary = HeaderColor,
+                AppbarBackground = HeaderColor,
+                AppbarText = "#FFFFFF"
+            },
             Typography = new Typography
             {
                 Default = new DefaultTypography { FontFamily = families },
